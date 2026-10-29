@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vanir National Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#14213D; --navy-2:#1C2B4D; --ink:#1B1E25; --paper:#F7F6F2; --paper-2:#EDEBE4;
+  --slate:#5B6472; --line:#D7D4CB; --orange:#E8700A; --orange-ink:#8C3F00; --orange-bg:#FFF1E4;
+  --green:#2E7D4F; --green-bg:#E6F2EA; --red:#B3261E; --red-bg:#FBE9E7;
+  --bg:var(--paper); --surface:#FFFFFF; --text:var(--ink); --muted:var(--slate);
+  --rail:var(--navy); --rail-text:#DCE3F2; --rail-muted:#8E9BB8;
+  --head:'Barlow Condensed','Arial Narrow','Helvetica Neue',Arial,sans-serif;
+  --body:'Barlow','Helvetica Neue',Arial,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121722; --surface:#1A2130; --text:#ECEEF3; --muted:#A3ACBD; --line:#2C3547; --paper-2:#202839;
+    --rail:#0C1120; --orange-bg:#3A2410; --orange-ink:#FFB376; --green-bg:#163322; --red-bg:#3A1B19;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121722; --surface:#1A2130; --text:#ECEEF3; --muted:#A3ACBD; --line:#2C3547; --paper-2:#202839;
+  --rail:#0C1120; --orange-bg:#3A2410; --orange-ink:#FFB376; --green-bg:#163322; --red-bg:#3A1B19;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+h1,h2,h3{font-family:var(--head);font-weight:700;line-height:1.05;margin:0;letter-spacing:-.005em}
+
+/* layout */
+.app{display:grid;grid-template-columns:260px 1fr;grid-template-rows:100%;height:100%;overflow:hidden}
+.rail{background:var(--rail);color:var(--rail-text);padding:28px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:22px}
+.brand{font-family:var(--head);font-size:26px;font-weight:700;color:#fff;line-height:1}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:13px;color:var(--rail-muted);margin-top:6px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:9px 10px;color:var(--rail-text);font-size:15px;font-weight:500}
+.nav button:hover{background:rgba(255,255,255,.06)}
+.nav button.locked{opacity:.45;cursor:not-allowed}
+.nav button.locked:hover{background:none}
+.nav button.active{background:rgba(255,255,255,.12);color:#fff}
+.nav button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.nav .tag{margin-left:auto;font-size:12px;font-weight:600;color:var(--rail-muted)}
+.nav .tag.pass{color:#7FD39A}
+.nav .tag.fail{color:#FF9A94}
+.nav .day-n{font-family:var(--head);font-size:17px;width:22px;color:var(--rail-muted)}
+.nav button.active .day-n{color:var(--orange)}
+.rail-foot{margin-top:auto;font-size:13px;color:var(--rail-muted);line-height:1.45}
+.rail-foot button{background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;color:var(--rail-text);padding:6px 10px;font-size:13px;margin-top:10px}
+
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:14px;padding:16px 36px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+.topbar .where{font-weight:600;color:var(--text)}
+.topbar .counter{margin-left:auto;font-variant-numeric:tabular-nums}
+.menu-btn{display:none;background:none;border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+.stage{flex:1;overflow-y:auto;padding:40px 36px 120px}
+.slide{max-width:860px;margin:0 auto}
+.slide h2{font-size:clamp(34px,4.4vw,52px);margin-bottom:18px}
+.slide h3{font-size:24px;margin:28px 0 10px}
+.slide p{margin:0 0 14px;max-width:70ch}
+.slide ul,.slide ol{margin:0 0 16px;padding-left:22px;max-width:72ch}
+.slide li{margin:0 0 8px}
+.kicker{font-size:14px;color:var(--muted);font-weight:500;margin-bottom:8px}
+.lead{font-size:20px;color:var(--text);max-width:64ch}
+
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0 18px;background:var(--surface)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:14px}
+.scroll{overflow-x:auto;max-width:100%}
+
+/* fraud emphasis: hazard stripe */
+.hazard{position:relative;background:var(--orange-bg);border-radius:8px;padding:22px 24px 22px 34px;margin:22px 0;color:var(--text)}
+.hazard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;border-radius:8px 0 0 8px;
+  background:repeating-linear-gradient(135deg,var(--orange) 0 10px,var(--navy) 10px 20px)}
+.hazard h3{margin-top:0;color:var(--orange-ink);font-size:26px}
+.hazard p:last-child{margin-bottom:0}
+.hazard.big h3{font-size:clamp(28px,3.6vw,40px)}
+.callout{border-left:4px solid var(--navy);padding:12px 18px;background:var(--surface);border-radius:0 6px 6px 0;margin:16px 0}
+.callout.good{border-color:var(--green);background:var(--green-bg)}
+.callout.bad{border-color:var(--red);background:var(--red-bg)}
+
+/* nav buttons */
+.slidenav{position:sticky;bottom:0;display:flex;gap:10px;justify-content:space-between;align-items:center;padding:16px 36px;border-top:1px solid var(--line);background:var(--bg)}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:11px 20px;font-weight:600;font-size:15px}
+.btn:hover{background:var(--navy-2)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--paper-2)}
+.btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--navy)}
+.dots i.done{background:var(--muted)}
+
+/* quiz */
+.q{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px 22px;margin:0 0 16px}
+.q .qn{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.q .qt{font-weight:600;font-size:18px;margin-bottom:12px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:11px 14px;width:100%}
+.opt:hover{border-color:var(--navy)}
+.opt.sel{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+.opt.right{border-color:var(--green);background:var(--green-bg)}
+.opt.wrong{border-color:var(--red);background:var(--red-bg)}
+.opt .k{font-family:var(--head);font-weight:700;font-size:18px;min-width:18px;color:var(--muted)}
+.exp{margin-top:12px;font-size:15px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.score{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:26px 28px;margin:10px 0 20px}
+.score .big{font-family:var(--head);font-size:64px;font-weight:700;line-height:1}
+.score.pass .big{color:var(--green)}
+.score.fail .big{color:var(--red)}
+
+/* carrier profile cards */
+.profile{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:18px 0 26px}
+.profile .ph{display:flex;justify-content:space-between;gap:16px;padding:16px 20px;background:var(--navy);color:#fff}
+.profile .ph .nm{font-family:var(--head);font-size:26px;font-weight:700;line-height:1.05}
+.profile .ph .dba{font-size:13px;color:#C4CEE4;margin-top:4px}
+.profile .ph .ids{text-align:right;font-size:13px;color:#C4CEE4;line-height:1.5}
+.profile .ph .ids b{color:#fff;font-size:16px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pcell{padding:14px 20px;border-bottom:1px solid var(--line)}
+.pcell:nth-child(odd){border-right:1px solid var(--line)}
+.pcell .lab{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.pcell .val{font-size:15px}
+.pcell .val.warn{color:var(--orange-ink);font-weight:600}
+.pcell.wide{grid-column:1/-1;border-right:0}
+.fg{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:6px 0;font-size:14px}
+.fg b{display:block;font-size:13px;color:var(--muted);margin-bottom:2px}
+.decide{display:flex;gap:10px;padding:16px 20px;flex-wrap:wrap;align-items:center}
+.decide .btn.approve{background:var(--green)}
+.decide .btn.decline{background:var(--red)}
+.decide .btn:disabled{opacity:.55;cursor:default}
+.decide .btn.chosen{outline:3px solid var(--navy);outline-offset:2px;opacity:1}
+.verdict{padding:0 20px 18px}
+.mock{font-size:12px;color:var(--muted);padding:8px 20px;border-top:1px dashed var(--line)}
+
+/* equipment gallery */
+.eqgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:18px 0}
+.eqc{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px 14px}
+.eqi svg{width:100%;height:auto;display:block}
+.eqn{font-family:var(--head);font-size:22px;font-weight:700;margin-top:6px}
+.eqs{font-size:14px;color:var(--muted);margin-top:2px}
+
+/* schedule tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px}
+.tile .d{font-family:var(--head);font-size:30px;font-weight:700;line-height:1}
+.tile .t{font-weight:600;margin-top:6px}
+.tile .s{font-size:13px;color:var(--muted);margin-top:4px}
+.tile.fraud{border-color:var(--orange);background:var(--orange-bg)}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .rail{position:fixed;inset:0 auto 0 0;width:min(84vw,300px);transform:translateX(-100%);transition:transform .2s;z-index:20;padding-top:calc(28px + env(safe-area-inset-top,0px))}
+  .rail.open{transform:none}
+  .menu-btn{display:inline-block}
+  .topbar,.stage,.slidenav{padding-left:18px;padding-right:18px}
+  .pgrid{grid-template-columns:1fr}
+  .pcell:nth-child(odd){border-right:0}
+  .profile .ph{flex-direction:column}
+  .profile .ph .ids{text-align:left}
+}
+@media (prefers-reduced-motion: reduce){ .rail{transition:none} }
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15}
+.scrim.open{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail" id="rail">
+    <div class="brand">Vanir National<small>Freight broker course · 6 days</small></div>
+    <nav class="nav" id="nav" aria-label="Course sections"></nav>
+    <div class="rail-foot">Progress saves in this browser. Use ← → keys to move between slides.
+      <br><button id="resetBtn">Reset my progress</button></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open course menu">Menu</button>
+      <span class="where" id="where"></span>
+      <span class="counter" id="counter"></span>
+    </div>
+    <div class="stage" id="stage"><div class="slide" id="slide"></div></div>
+    <div class="slidenav">
+      <button class="btn ghost" id="prevBtn">Back</button>
+      <div class="dots" id="dots"></div>
+      <button class="btn" id="nextBtn">Next</button>
+    </div>
+  </div>
+</div>
+<script>
+// ---------- COURSE CONTENT ----------
+const COURSE = [];
+
+// ---------- EQUIPMENT ILLUSTRATIONS (inline SVG, side profile, facing right) ----------
+const W=(x,y,r=11)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#1B1E25"/><circle cx="${x}" cy="${y}" r="${r*0.45}" fill="#9AA3B2"/>`;
+const TRACTOR=(x=150)=>`<rect x="${x}" y="38" width="46" height="42" rx="4" fill="var(--navy)"/><rect x="${x+46}" y="58" width="34" height="22" rx="3" fill="var(--navy)"/><rect x="${x+8}" y="44" width="24" height="16" rx="2" fill="#B8D0F0"/><rect x="${x-6}" y="78" width="90" height="6" fill="#3A4150"/>${W(x+10,86)}${W(x+66,86)}`;
+const TRAILER_BOX=(x=12,w=134,color="#E4E1D8")=>`<rect x="${x}" y="28" width="${w}" height="52" rx="2" fill="${color}" stroke="#8E95A3"/><rect x="${x+4}" y="78" width="${w-8}" height="6" fill="#3A4150"/>${W(x+22,86)}${W(x+46,86)}`;
+const GROUND=`<line x1="0" y1="98" x2="240" y2="98" stroke="#8E95A3" stroke-width="1.5"/>`;
+const SVG=(inner,label)=>`<svg viewBox="0 0 240 104" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${inner}${GROUND}</svg>`;
+const EQ={
+  van: SVG(TRAILER_BOX()+TRACTOR(), "Dry van: 53-foot enclosed trailer"),
+  reefer: SVG(TRAILER_BOX(12,134,"#F3F6FA")+`<rect x="140" y="32" width="10" height="22" rx="1" fill="#4A5568"/><text x="70" y="60" font-size="18" text-anchor="middle" fill="#4A6FA5" font-family="Arial">❆</text>`+TRACTOR(), "Reefer: insulated trailer with a cooling unit on the nose"),
+  flatbed: SVG(`<rect x="12" y="72" width="138" height="8" fill="#8E95A3"/><rect x="16" y="78" width="130" height="6" fill="#3A4150"/>${W(34,86)}${W(58,86)}<circle cx="50" cy="58" r="14" fill="#6B7280"/><circle cx="50" cy="58" r="5" fill="#E4E1D8"/><circle cx="84" cy="58" r="14" fill="#6B7280"/><circle cx="84" cy="58" r="5" fill="#E4E1D8"/><circle cx="118" cy="58" r="14" fill="#6B7280"/><circle cx="118" cy="58" r="5" fill="#E4E1D8"/>`+TRACTOR(), "Flatbed: open deck, here loaded with steel coils"),
+  stepdeck: SVG(`<rect x="112" y="52" width="38" height="8" fill="#8E95A3"/><rect x="12" y="66" width="100" height="8" fill="#8E95A3"/><rect x="110" y="52" width="4" height="22" fill="#8E95A3"/><rect x="16" y="78" width="80" height="6" fill="#3A4150"/>${W(34,86)}${W(58,86)}<rect x="24" y="18" width="60" height="48" rx="3" fill="#C9A227"/><rect x="30" y="8" width="20" height="12" fill="#C9A227"/>`+TRACTOR(), "Step deck: upper front deck, lower rear deck for tall freight"),
+  poweronly: SVG(`<rect x="28" y="38" width="46" height="42" rx="4" fill="var(--navy)"/><rect x="74" y="58" width="34" height="22" rx="3" fill="var(--navy)"/><rect x="36" y="44" width="24" height="16" rx="2" fill="#B8D0F0"/><rect x="0" y="78" width="112" height="6" fill="#3A4150"/><rect x="4" y="70" width="22" height="8" fill="#3A4150"/>${W(14,86)}${W(94,86)}<text x="165" y="64" font-size="13" fill="var(--muted)" font-family="Arial">no trailer</text>`, "Power only: tractor without a trailer"),
+  hotshot: SVG(`<rect x="8" y="66" width="96" height="8" fill="#8E95A3"/><rect x="104" y="44" width="4" height="30" fill="#8E95A3"/><rect x="108" y="44" width="30" height="4" fill="#8E95A3"/>${W(36,86,9)}${W(58,86,9)}<rect x="16" y="46" width="36" height="20" fill="#C9A227"/><rect x="136" y="46" width="44" height="28" rx="2" fill="var(--navy)"/><rect x="180" y="60" width="40" height="14" rx="2" fill="var(--navy)"/><rect x="142" y="50" width="22" height="12" rx="2" fill="#B8D0F0"/><rect x="130" y="74" width="96" height="4" fill="#3A4150"/>${W(154,86,9)}${W(206,86,9)}`, "Hotshot: pickup truck pulling a gooseneck trailer"),
+  boxtruck: SVG(`<rect x="60" y="32" width="100" height="48" rx="2" fill="#E4E1D8" stroke="#8E95A3"/><rect x="160" y="46" width="40" height="34" rx="4" fill="var(--navy)"/><rect x="168" y="50" width="22" height="14" rx="2" fill="#B8D0F0"/><rect x="56" y="78" width="150" height="6" fill="#3A4150"/>${W(90,86,10)}${W(184,86,10)}<rect x="60" y="70" width="6" height="14" fill="#3A4150"/>`, "Box truck: straight truck with the cargo box on the same chassis")
+};
+const eqCard=(k,name,sub)=>`<div class="eqc"><div class="eqi">${EQ[k]}</div><div class="eqn">${name}</div><div class="eqs">${sub}</div></div>`;
+
+COURSE.push({
+  id:"start", label:"Start here", short:"Start",
+  slides:[
+    {h:"Welcome to the Vanir National broker course", k:"Six days, six quizzes, one final exam", html:`
+      <p class="lead">This course takes you from zero freight knowledge to booking your first supervised load. Each day ends with a short quiz; the course ends with a 34-question final. You need 85% on each day’s quiz to unlock the next day, and 85% on the final to graduate.</p>
+      <div class="tiles">
+        <div class="tile"><div class="d">1</div><div class="t">How freight works</div><div class="s">Parties, margin, the broker’s job</div></div>
+        <div class="tile"><div class="d">2</div><div class="t">Equipment and modes</div><div class="s">Vans, reefers, flatbeds, LTL class</div></div>
+        <div class="tile fraud"><div class="d">3</div><div class="t">Fraud and carrier vetting</div><div class="s">The day that protects the money</div></div>
+        <div class="tile"><div class="d">4</div><div class="t">Pricing and posting</div><div class="s">DAT RateView, margin, what to post</div></div>
+        <div class="tile"><div class="d">5</div><div class="t">Running the load</div><div class="s">Dispatch, tracking, paperwork, billing</div></div>
+        <div class="tile"><div class="d">6</div><div class="t">Landing shippers</div><div class="s">Sourcing, the sales cycle, follow-up</div></div>
+      </div>
+      <div class="hazard big"><h3>Read this before anything else</h3>
+        <p>Freight fraud is the fastest way to lose Vanir National’s money and your job. Double brokering, carrier identity theft and stolen loads cost the industry hundreds of millions of dollars a year, and new brokers are the preferred target because they are eager to cover a load and slow to say no.</p>
+        <p>No carrier gets dispatched until the vetting checklist is complete. Not “mostly done.” Complete. If a senior broker is not available to sign off, the load waits.</p></div>`},
+    {h:"How to use this course", html:`
+      <ul>
+        <li>Move through slides with the Next button or the arrow keys. Days unlock in order: the next day opens only after you pass the current day’s quiz.</li>
+        <li>Each quiz draws 8 questions from a pool of 25. It grades instantly and explains every answer. You need 85% to move on; if you miss, you retake with a fresh set of questions.</li>
+        <li>Day 3 includes a carrier screening lab: seven mock carrier profiles laid out the way a vetting tool shows them. You decide approve or decline, and the course grades your reasoning.</li>
+        <li>The final exam unlocks after all six quizzes are passed. It covers everything, and fraud and vetting questions are weighted heaviest.</li>
+        <li>Your progress saves in this browser. Your trainer will ask to see your final score screen.</li>
+      </ul>
+      <div class="callout">Trainer note: the mock carrier profiles are fictional. Before the live class, pull three real carriers from your Carrier411 account (one clean, one with lapsed insurance, one with FreightGuard reports) and screen them together on a shared screen.</div>`}
+  ]
+});
+
+COURSE.push({
+  id:"day1", label:"How freight works", short:"Day 1", day:1,
+  slides:[
+    {h:"What a freight broker actually does", k:"Day 1", html:`
+      <p class="lead">A broker matches a shipper who has freight with a carrier who has a truck, and gets paid for making the match happen reliably. We own no trucks. We never touch the freight. What we sell is coverage, communication and trust.</p>
+      <p>Roughly 70% of US freight tonnage moves by truck. Most of what Vanir National handles is full truckload: one shipper, one truck, origin to destination.</p>`},
+    {h:"The five parties on every load", html:`
+      <table><tr><th>Party</th><th>Who they are</th><th>What they want from you</th></tr>
+      <tr><td>Shipper</td><td>Owns the freight, pays Vanir National</td><td>A truck that shows up, a fair rate, no surprises</td></tr>
+      <tr><td>Consignee</td><td>Receives the freight</td><td>On-time delivery, correct paperwork</td></tr>
+      <tr><td>Carrier</td><td>The trucking company, often 1 to 10 trucks</td><td>A fair rate, fast pay, honest load details</td></tr>
+      <tr><td>Driver</td><td>The person doing the work</td><td>Accurate appointment times, a phone that gets answered</td></tr>
+      <tr><td>Broker (us)</td><td>Arranges the carrier; legally an arranger, not a carrier</td><td>Margin and repeat business</td></tr></table>
+      <p>Learn to think from the carrier’s side. A small carrier worries about fuel, hours of service and getting paid. Brokers who understand that negotiate better and burn fewer bridges.</p>`},
+    {h:"How we make money", html:`
+      <p class="lead">Three numbers live on every load: the customer rate, the carrier rate, and the difference, which is gross margin.</p>
+      <table><tr><th>Line</th><th>Example</th></tr>
+      <tr><td>Customer rate (shipper pays us)</td><td>$2,400</td></tr>
+      <tr><td>Carrier rate (we pay the truck)</td><td>$2,050</td></tr>
+      <tr><td>Gross margin</td><td>$350, which is 14.6% of the customer rate</td></tr></table>
+      <p>Industry average margin runs 12 to 18%. Your trainer will give you Vanir National’s floor and target. Margin as a percentage is always calculated against the customer rate.</p>
+      <p>Carriers think in rate per mile. $2,050 on 940 miles is $2.18 per mile. Learn to convert in your head; you will do it 50 times a day.</p>`},
+    {h:"Broker, carrier, 3PL, dispatcher", html:`
+      <p>Shippers and carriers will ask what you are. Have one sentence for each.</p>
+      <ul>
+        <li><strong>Asset carrier:</strong> owns trucks and hauls freight with its own drivers.</li>
+        <li><strong>Freight broker:</strong> licensed by FMCSA, arranges carriers for shippers, holds a $75,000 bond, owns no trucks.</li>
+        <li><strong>3PL:</strong> a broader logistics provider that may also run warehouses, manage a shipper’s whole transportation program, or both. Many 3PLs have a brokerage inside them.</li>
+        <li><strong>Dispatcher:</strong> works for the carrier, finding loads for its trucks. Not licensed as a broker; cannot legally arrange freight for a shipper.</li>
+      </ul>
+      <p>Why it matters: a “carrier” who turns out to be a dispatcher or an unlicensed broker is a double-brokering risk. You will learn to spot this on Day 3.</p>`},
+    {h:"A broker’s day", html:`
+      <ol>
+        <li><strong>7:00 to 8:00</strong> Check every load in transit. Confirm drivers are rolling. Send status to customers before they ask.</li>
+        <li><strong>8:00 to 10:00</strong> Cover open loads for today and tomorrow. The best trucks are booked by 10 a.m.</li>
+        <li><strong>10:00 to 12:00</strong> Prospect. Calls and quotes to new shippers. Every day, no exceptions.</li>
+        <li><strong>Afternoon</strong> Pickup confirmations, appointment problems, carrier calls, rate confirmations, quotes for tomorrow.</li>
+        <li><strong>3:00 to 5:00</strong> Delivery confirmations, collect PODs, set up tomorrow’s dispatches, final check calls.</li>
+      </ol>
+      <p>The habit that separates brokers who last from brokers who wash out is the 10-to-12 prospecting block. Protect it.</p>`}
+  ],
+  quiz:[
+    {
+            "q": "Gross margin on a load is:",
+            "o": [
+                    "The customer rate",
+                    "The carrier rate",
+                    "The difference between the customer rate and the carrier rate",
+                    "The fuel surcharge"
+            ],
+            "a": 2,
+            "e": "Customer rate minus carrier rate."
+    },
+    {
+        "q": "Which party owns the freight and pays Vanir National?",
+        "o": [
+            "Consignee",
+            "Carrier",
+            "Shipper",
+            "Driver"
+        ],
+        "a": 2,
+        "e": "The shipper is our customer; the consignee receives."
+    },
+    {
+        "q": "A freight broker is legally:",
+        "o": [
+            "A carrier",
+            "An arranger of transportation",
+            "A warehouse operator",
+            "A dispatcher"
+        ],
+        "a": 1,
+        "e": "Brokers arrange; they never take possession."
+    },
+    {
+        "q": "Someone with no MC number who “finds loads for a few trucks” wants your load. They are most likely a:",
+        "o": [
+            "Dispatcher",
+            "3PL",
+            "Asset carrier",
+            "Shipper"
+        ],
+        "a": 0,
+        "e": "Dispatchers work for carriers and cannot legally arrange freight for shippers."
+    },
+    {
+        "q": "$2,050 on 940 miles is about:",
+        "o": [
+            "$1.85/mi",
+            "$2.18/mi",
+            "$2.45/mi",
+            "$2.60/mi"
+        ],
+        "a": 1,
+        "e": "$2,050 ÷ 940 = $2.18."
+    },
+    {
+        "q": "When should a new broker prospect?",
+        "o": [
+            "Only with no loads to cover",
+            "Late afternoon",
+            "A protected block every day",
+            "Fridays only"
+        ],
+        "a": 2,
+        "e": "Daily, protected prospecting builds the book."
+    },
+    {
+        "q": "Roughly what share of US freight tonnage moves by truck?",
+        "o": [
+            "30%",
+            "50%",
+            "70%",
+            "95%"
+        ],
+        "a": 2,
+        "e": "About 70%."
+    },
+    {
+        "q": "The consignee is:",
+        "o": [
+            "The party paying the invoice",
+            "The party receiving the freight",
+            "The insurance company",
+            "The factoring company"
+        ],
+        "a": 1,
+        "e": "Consignee = receiver."
+    },
+    {
+        "q": "A broker’s surety bond requirement is:",
+        "o": [
+            "$10,000",
+            "$75,000",
+            "$250,000",
+            "$1,000,000"
+        ],
+        "a": 1,
+        "e": "BMC-84 bond or BMC-85 trust, $75,000."
+    },
+    {
+            "q": "Margin percentage is always measured against:",
+            "o": [
+                    "The carrier rate",
+                    "The customer rate",
+                    "Mileage",
+                    "Linehaul only"
+            ],
+            "a": 1,
+            "e": "Against what the shipper pays."
+    },
+    {
+            "q": "Which of these increases gross margin on a load?",
+            "o": [
+                    "Paying the carrier more",
+                    "Covering the load for less than planned",
+                    "Adding deadhead miles",
+                    "Skipping the rate con"
+            ],
+            "a": 1,
+            "e": "Lower carrier cost, same customer rate, more margin."
+    },
+    {
+        "q": "Which statement about a 3PL is correct?",
+        "o": [
+            "Always owns trucks",
+            "May run warehouses and manage a shipper’s whole program; often contains a brokerage",
+            "Is unlicensed",
+            "Only handles LTL"
+        ],
+        "a": 1,
+        "e": "3PL is a broader logistics provider."
+    },
+    {
+        "q": "Why learn the carrier’s point of view?",
+        "o": [
+            "To lower their rate",
+            "To negotiate better and keep relationships",
+            "It is required by FMCSA",
+            "It is not useful"
+        ],
+        "a": 1,
+        "e": "Understanding fuel, hours and cash flow makes you a better partner."
+    },
+    {
+        "q": "The best trucks for next-day freight are usually booked by:",
+        "o": [
+            "7 a.m.",
+            "10 a.m.",
+            "2 p.m.",
+            "5 p.m."
+        ],
+        "a": 1,
+        "e": "Cover before 10 a.m."
+    },
+    {
+        "q": "Which belongs in the 7-to-8 a.m. block?",
+        "o": [
+            "Prospecting",
+            "Checking in-transit loads and sending status",
+            "Invoicing",
+            "Posting tomorrow’s loads"
+        ],
+        "a": 1,
+        "e": "Check tracking first, update customers before they ask."
+    },
+    {
+        "q": "Industry-average broker gross margin runs about:",
+        "o": [
+            "2 to 5%",
+            "12 to 18%",
+            "30 to 40%",
+            "50%"
+        ],
+        "a": 1,
+        "e": "12 to 18%."
+    },
+    {
+        "q": "A carrier with 3 trucks is best described as:",
+        "o": [
+            "A 3PL",
+            "A small asset carrier",
+            "A broker",
+            "A shipper"
+        ],
+        "a": 1,
+        "e": "Most carriers are small fleets."
+    },
+    {
+        "q": "Who does the driver work for?",
+        "o": [
+            "Vanir National",
+            "The shipper",
+            "The carrier",
+            "The consignee"
+        ],
+        "a": 2,
+        "e": "The driver is the carrier’s employee or owner-operator."
+    },
+    {
+        "q": "What does a broker actually sell?",
+        "o": [
+            "Trucks",
+            "Fuel",
+            "Coverage, communication and trust",
+            "Warehouse space"
+        ],
+        "a": 2,
+        "e": "We own no trucks; we sell reliability."
+    },
+    {
+        "q": "Carriers typically think about price in terms of:",
+        "o": [
+            "Rate per mile",
+            "Total profit",
+            "Rate per pallet",
+            "Rate per hour"
+        ],
+        "a": 0,
+        "e": "Convert all-in to RPM instantly."
+    },
+    {
+        "q": "$2,400 all-in for 1,200 miles is:",
+        "o": [
+            "$1.80/mi",
+            "$2.00/mi",
+            "$2.20/mi",
+            "$2.40/mi"
+        ],
+        "a": 1,
+        "e": "$2,400 ÷ 1,200 = $2.00."
+    },
+    {
+        "q": "Which of these is NOT one of the five parties on a load?",
+        "o": [
+            "Shipper",
+            "Consignee",
+            "Insurance agent",
+            "Driver"
+        ],
+        "a": 2,
+        "e": "Shipper, consignee, carrier, driver, broker."
+    },
+    {
+        "q": "A broker’s legal position matters most for:",
+        "o": [
+            "Marketing",
+            "Liability and how we describe ourselves to customers",
+            "Fuel pricing",
+            "Load board access"
+        ],
+        "a": 1,
+        "e": "Arranger, not carrier, changes liability."
+    },
+    {
+        "q": "What separates brokers who last from those who wash out?",
+        "o": [
+            "Lower rates",
+            "Daily prospecting discipline",
+            "Bigger loads",
+            "Working weekends"
+        ],
+        "a": 1,
+        "e": "Protect the prospecting block."
+    },
+    {
+        "q": "The afternoon block is mainly for:",
+        "o": [
+            "Prospecting",
+            "Pickup confirmations, carrier calls, rate cons, quoting tomorrow",
+            "Sleeping",
+            "Checking email only"
+        ],
+        "a": 1,
+        "e": "Operations and setting up tomorrow."
+    }
+]
+});
+
+COURSE.push({
+  id:"day2", label:"Equipment and modes", short:"Day 2", day:2,
+  slides:[
+    {h:"Hear the freight, name the truck", k:"Day 2", html:`
+      <p class="lead">By the end of today you can hear a commodity described over the phone and name the right equipment, the mode and the rough weight limit without looking it up.</p>
+      <p>Getting equipment wrong is expensive: a dry van cannot haul frozen chicken, and a flatbed carrier showing up for a reefer load is a cancelled pickup and an angry customer.</p>`},
+    {h:"Equipment types", html:`
+      <div class="scroll"><table><tr><th>Equipment</th><th>Typical freight</th><th>Max weight (lbs)</th><th>Broker notes</th></tr>
+      <tr><td>Dry van, 53 ft</td><td>Boxed, palletized, non-perishable</td><td>42,000 to 45,000</td><td>Most common, cheapest, tightest competition</td></tr>
+      <tr><td>Reefer, 53 ft</td><td>Produce, meat, dairy, pharma</td><td>42,000 to 44,000</td><td>Confirm set temp and continuous vs. cycle; rates 15 to 30% above van</td></tr>
+      <tr><td>Flatbed, 48 ft</td><td>Steel, lumber, machinery</td><td>48,000</td><td>Tarping and securement are accessorials; weather-sensitive</td></tr>
+      <tr><td>Step deck</td><td>Tall equipment over 8 ft 6 in</td><td>48,000</td><td>Lower deck adds height clearance</td></tr>
+      <tr><td>Power only</td><td>Customer supplies the trailer</td><td>Varies</td><td>Confirm trailer condition before dispatch</td></tr>
+      <tr><td>Hotshot</td><td>Small, urgent freight</td><td>Up to 10,000</td><td>Fast and pricey; good for expedite</td></tr>
+      <tr><td>Box truck</td><td>Local, no dock, residential</td><td>About 10,000 without a CDL driver; up to 26,000 with a CDL driver</td><td>Liftgate often required; ask whether the driver holds a CDL before booking anything over 10,000 lbs</td></tr></table></div>`},
+    {h:"What they look like", html:`
+      <p>Side profiles of each type. Learn the silhouettes; carriers describe their equipment in these terms and you will see them in yard photos and on load boards.</p>
+      <div class="eqgrid">
+        ${eqCard("van","Dry van","Enclosed 53 ft box; the most common trailer on the road")}
+        ${eqCard("reefer","Reefer","Same box shape, insulated, with the refrigeration unit mounted on the nose")}
+        ${eqCard("flatbed","Flatbed","Open 48 ft deck; freight is strapped or chained and often tarped")}
+        ${eqCard("stepdeck","Step deck","Deck drops behind the gooseneck so tall freight stays under 13 ft 6 in")}
+        ${eqCard("poweronly","Power only","Just the tractor; the customer provides the trailer")}
+        ${eqCard("hotshot","Hotshot","Heavy-duty pickup with a gooseneck trailer; small, urgent loads")}
+        ${eqCard("boxtruck","Box truck","Cab and cargo box on one chassis; local and no-dock deliveries")}
+      </div>`},
+    {h:"Modes", html:`
+      <ul>
+        <li><strong>Full truckload (FTL):</strong> one shipper, one truck, direct. Vanir National’s core business.</li>
+        <li><strong>Less-than-truckload (LTL):</strong> shared trailer, hub-and-spoke network, priced by freight class and weight. Slower, more handling, more damage.</li>
+        <li><strong>Partial or volume:</strong> 6 to 20 pallets, too big for LTL and too small to justify a full truck. Often the best margin in the building.</li>
+        <li><strong>Intermodal:</strong> rail for the long haul, truck drayage at each end. Cheaper and slower; needs 5 or more days.</li>
+        <li><strong>Expedite:</strong> time-critical freight on sprinter vans and hotshots at premium rates.</li>
+      </ul>`},
+    {h:"Freight class (LTL only)", html:`
+      <p>NMFC classes run from 50 (dense and durable, like bricks or steel) to 500 (light, fragile and bulky, like ping-pong balls). Class is driven by density first, then stowability, handling and liability.</p>
+      <p><strong>Density</strong> = weight in pounds ÷ cubic feet. A pallet 48 × 40 × 48 inches is 53.3 cubic feet. At 1,200 lbs it has a density of 22.5 lbs per cubic foot, which lands around class 70.</p>
+      <div class="callout">A wrong class triggers a reclass fee from the LTL carrier, and that fee comes straight out of your margin. When in doubt, weigh and measure before quoting.</div>`},
+    {h:"Three details to confirm on every load", html:`
+      <ol>
+        <li><strong>Weight and piece count.</strong> Over 44,000 lbs on a van is usually illegal once the tractor and trailer are counted. Ask.</li>
+        <li><strong>Loading method and dock.</strong> Dock-high, ground level, forklift available, liftgate needed, driver assist expected.</li>
+        <li><strong>Special requirements.</strong> Temperature, hazmat, tarps, straps, seals, team drivers, appointment vs. first-come-first-served.</li>
+      </ol>
+      <p>Every one of these becomes a dispute on the dock if you do not ask before you quote.</p>`}
+  ],
+  quiz:[
+    {
+        "q": "44,000 lbs of frozen chicken, Georgia to New Jersey. Equipment?",
+        "o": [
+            "Dry van",
+            "Reefer",
+            "Flatbed",
+            "Hotshot"
+        ],
+        "a": 1,
+        "e": "Frozen product needs a reefer; confirm set temperature."
+    },
+    {
+        "q": "A 12-foot-tall piece of machinery. Best fit?",
+        "o": [
+            "Dry van",
+            "Standard flatbed",
+            "Step deck",
+            "Box truck"
+        ],
+        "a": 2,
+        "e": "Over 8 ft 6 in tall needs the step deck’s lower deck."
+    },
+    {
+        "q": "10 pallets, 12,000 lbs, Dallas to Memphis. Most cost-effective mode?",
+        "o": [
+            "Full truckload",
+            "Partial or volume",
+            "Intermodal",
+            "Expedite"
+        ],
+        "a": 1,
+        "e": "Too big for LTL, too small for a whole truck."
+    },
+    {
+        "q": "Freight class is primarily determined by:",
+        "o": [
+            "Distance",
+            "Density",
+            "Delivery date",
+            "Carrier preference"
+        ],
+        "a": 1,
+        "e": "Density first, then stowability, handling, liability."
+    },
+    {
+        "q": "The shipper says “about 46,000 lbs” for a dry van. You should:",
+        "o": [
+            "Book it",
+            "Confirm the real weight; it likely exceeds legal gross",
+            "Quote a reefer",
+            "Add tarping"
+        ],
+        "a": 1,
+        "e": "Above ~44,000 to 45,000 lbs a van is over 80,000 gross."
+    },
+    {
+        "q": "A power-only truck is offered. Confirm:",
+        "o": [
+            "Driver passport",
+            "Customer supplies a roadworthy trailer",
+            "Liftgate",
+            "Five-truck fleet"
+        ],
+        "a": 1,
+        "e": "Power only means the customer provides the trailer."
+    },
+    {
+        "q": "A hotshot can typically haul up to:",
+        "o": [
+            "5,000 lbs",
+            "10,000 lbs",
+            "26,000 lbs",
+            "45,000 lbs"
+        ],
+        "a": 1,
+        "e": "Up to about 10,000 lbs."
+    },
+    {
+        "q": "A box truck with a CDL driver can haul up to about:",
+        "o": [
+            "10,000 lbs",
+            "16,000 lbs",
+            "26,000 lbs",
+            "40,000 lbs"
+        ],
+        "a": 2,
+        "e": "About 10,000 without a CDL, up to 26,000 with one."
+    },
+    {
+        "q": "A box truck without a CDL driver is limited to about:",
+        "o": [
+            "5,000 lbs",
+            "10,000 lbs",
+            "20,000 lbs",
+            "26,000 lbs"
+        ],
+        "a": 1,
+        "e": "Roughly 10,000 lbs."
+    },
+    {
+        "q": "Standard dry van trailer length:",
+        "o": [
+            "40 ft",
+            "48 ft",
+            "53 ft",
+            "60 ft"
+        ],
+        "a": 2,
+        "e": "53 ft."
+    },
+    {
+        "q": "Standard flatbed length:",
+        "o": [
+            "40 ft",
+            "48 ft",
+            "53 ft",
+            "60 ft"
+        ],
+        "a": 1,
+        "e": "48 ft is standard; 53 ft exists."
+    },
+    {
+        "q": "Max legal payload on a flatbed is about:",
+        "o": [
+            "30,000 lbs",
+            "42,000 lbs",
+            "48,000 lbs",
+            "60,000 lbs"
+        ],
+        "a": 2,
+        "e": "About 48,000 lbs."
+    },
+    {
+        "q": "Reefer rates compared to dry van typically run:",
+        "o": [
+            "The same",
+            "5% lower",
+            "15 to 30% higher",
+            "Double"
+        ],
+        "a": 2,
+        "e": "Reefer and flatbed run 15 to 30% above van."
+    },
+    {
+        "q": "“Continuous vs. cycle” refers to:",
+        "o": [
+            "Driver hours",
+            "How the reefer unit runs",
+            "Flatbed tarping",
+            "LTL pricing"
+        ],
+        "a": 1,
+        "e": "Confirm how the shipper wants the reefer unit to operate."
+    },
+    {
+        "q": "LTL stands for:",
+        "o": [
+            "Long truck load",
+            "Less-than-truckload",
+            "Limited time load",
+            "Local truck lane"
+        ],
+        "a": 1,
+        "e": "Shared trailer, hub-and-spoke."
+    },
+    {
+        "q": "Which mode has the most handling and damage risk?",
+        "o": [
+            "FTL",
+            "LTL",
+            "Power only",
+            "Hotshot"
+        ],
+        "a": 1,
+        "e": "LTL freight is handled at multiple terminals."
+    },
+    {
+        "q": "Intermodal is best when:",
+        "o": [
+            "Freight is urgent",
+            "Transit of 5+ days is acceptable and cost matters",
+            "Freight is under 1,000 lbs",
+            "Reefer is needed"
+        ],
+        "a": 1,
+        "e": "Rail is cheaper and slower."
+    },
+    {
+        "q": "Expedite freight usually moves on:",
+        "o": [
+            "53 ft vans",
+            "Sprinter vans and hotshots",
+            "Rail",
+            "Step decks"
+        ],
+        "a": 1,
+        "e": "Small, fast, premium."
+    },
+    {
+        "q": "Tarping on a flatbed is:",
+        "o": [
+            "Included free",
+            "An accessorial charge",
+            "Illegal",
+            "Only for reefers"
+        ],
+        "a": 1,
+        "e": "Tarping is billable; put it in the quote."
+    },
+    {
+        "q": "NMFC class 50 freight is:",
+        "o": [
+            "Light and fragile",
+            "Dense and durable",
+            "Hazmat",
+            "Oversize"
+        ],
+        "a": 1,
+        "e": "Class 50 is the densest, cheapest class."
+    },
+    {
+        "q": "A wrong freight class on LTL leads to:",
+        "o": [
+            "A faster delivery",
+            "A reclass fee that eats margin",
+            "Nothing",
+            "A refund"
+        ],
+        "a": 1,
+        "e": "Carriers reweigh and reclass."
+    },
+    {
+        "q": "Which detail must be confirmed before quoting any load?",
+        "o": [
+            "Driver’s name",
+            "Weight and piece count",
+            "Carrier’s fuel card",
+            "Receiver’s birthday"
+        ],
+        "a": 1,
+        "e": "Weight, loading method, special requirements."
+    },
+    {
+        "q": "Ground-level delivery with no forklift usually needs:",
+        "o": [
+            "A reefer",
+            "A liftgate",
+            "A step deck",
+            "Rail"
+        ],
+        "a": 1,
+        "e": "Liftgate for no-dock deliveries."
+    },
+    {
+        "q": "Steel coils from a mill most commonly move on:",
+        "o": [
+            "Dry van",
+            "Reefer",
+            "Flatbed",
+            "Box truck"
+        ],
+        "a": 2,
+        "e": "Open deck, chained and often tarped."
+    },
+    {
+        "q": "Partial freight is typically:",
+        "o": [
+            "1 to 2 pallets",
+            "6 to 20 pallets",
+            "26 pallets",
+            "Rail only"
+        ],
+        "a": 1,
+        "e": "Between LTL and FTL."
+    }
+]
+});
+
+// ---------- DAY 3: FRAUD & VETTING ----------
+const CARRIERS = [
+  { name:"Ridgeback Transport LLC", dba:"", mc:"MC-612480", dot:"DOT 1844302", auth:"Active since March 2014", reinst:"None", addr:"2210 Industrial Pkwy, Joliet, IL", fmcsaPhone:"(815) 555-0142", fmcsaEmail:"dispatch@ridgebacktransport.com", callerPhone:"(815) 555-0142", callerEmail:"dispatch@ridgebacktransport.com",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Great Lakes Mutual", insEff:"Effective Jan 1, 2026; no cancellation on file", rating:"Satisfactory", drvOOS:"3.1%", vehOOS:"14.8%", units:"18 power units", insp:"62 inspections, 24 months", changes:"None in 12 months", fg:[],
+    answer:"approve", why:"Clean on every line: 12-year authority, insurance verified, OOS rates under the national average, no FreightGuard reports, caller contact matches FMCSA. This is what a good carrier looks like. Still call the insurance agent before dispatch." },
+  { name:"Summit Peak Logistics Inc", dba:"", mc:"MC-884127", dot:"DOT 2763311", auth:"Active since June 2019", reinst:"None", addr:"77 Valley Rd, Ogden, UT", fmcsaPhone:"(801) 555-0193", fmcsaEmail:"ops@summitpeaklog.com", callerPhone:"(801) 555-0193", callerEmail:"ops@summitpeaklog.com",
+    autoLiab:"$1,000,000", cargo:"None on file; cargo policy cancelled Oct 17, 2026", insurer:"Western Freight Insurers (auto only)", insEff:"Auto effective Feb 1, 2026; cargo cancelled Oct 17, 2026", rating:"Satisfactory", drvOOS:"4.0%", vehOOS:"19.5%", units:"9 power units", insp:"31 inspections, 24 months", changes:"Cargo insurance filing cancelled Oct 17, 2026", fg:[],
+    answer:"decline", why:"Everything looks fine until the insurance block: cargo coverage was cancelled 12 days ago. If this truck loses your freight, there is no policy to claim against. Decline until a new cargo COI is on file and verified with the agent." },
+  { name:"Apex Horizon Carriers LLC", dba:"AHC Freight", mc:"MC-1598822", dot:"DOT 4211907", auth:"Active since September 18, 2026", reinst:"None", addr:"4400 Commerce Dr, Suite 210, Doral, FL", fmcsaPhone:"(305) 555-0177", fmcsaEmail:"apexhorizon@carriermail.com", callerPhone:"(786) 555-0021", callerEmail:"apexhorizon.dispatch@gmail.com",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Coastal Commercial Insurance", insEff:"Effective Sep 15, 2026", rating:"None (not yet rated)", drvOOS:"No data", vehOOS:"No data", units:"2 power units", insp:"0 inspections", changes:"Address changed Oct 11, 2026; officer name changed Oct 11, 2026", fg:[],
+    answer:"decline", why:"Three fraud signals stacked: authority is 41 days old, the address and officer changed 18 days ago to a mail-center suite, and the caller’s phone and Gmail address do not match FMCSA. Any one is a yellow flag; all three together is the identity-theft or double-broker profile. Hang up, call the FMCSA number, and do not book." },
+  { name:"Bluewater Freight Lines", dba:"", mc:"MC-703355", dot:"DOT 2109884", auth:"Active since November 2016", reinst:"None", addr:"915 Harbor St, Mobile, AL", fmcsaPhone:"(251) 555-0108", fmcsaEmail:"loads@bluewaterfreight.net", callerPhone:"(251) 555-0108", callerEmail:"loads@bluewaterfreight.net",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Southern States Assurance", insEff:"Effective Apr 1, 2026", rating:"Satisfactory", drvOOS:"5.2%", vehOOS:"22.0%", units:"11 power units", insp:"44 inspections, 24 months", changes:"None in 12 months",
+    fg:[{d:"Aug 2023", t:"Late delivery, 1 day, no communication from driver. Filed by a broker in Georgia.", r:"Carrier response: driver had a medical issue; broker was notified by dispatch at 6 a.m. Documentation attached. Carrier has since added tracking app requirement for all drivers."}],
+    answer:"approve", why:"One FreightGuard report from three years ago, for a late delivery, with a credible rebuttal and a process fix. That is context, not a pattern. OOS rates are right at the national average. Approve, and note the history in the TMS so you watch tracking on the first load." },
+  { name:"Ironclad Haulers Inc", dba:"Ironclad Logistics", mc:"MC-921004", dot:"DOT 3012776", auth:"Active since May 2020", reinst:"Reinstated Feb 2025 after revocation for insurance lapse", addr:"1800 N 5th Ave, Phoenix, AZ", fmcsaPhone:"(602) 555-0160", fmcsaEmail:"book@ironcladhaulers.com", callerPhone:"(602) 555-0160", callerEmail:"book@ironcladhaulers.com",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Desert Shield Insurance", insEff:"Effective Feb 20, 2025", rating:"Satisfactory", drvOOS:"6.8%", vehOOS:"25.1%", units:"7 power units", insp:"29 inspections, 24 months", changes:"Authority reinstated Feb 2025",
+    fg:[{d:"Sep 2026", t:"Double brokering. Carrier accepted load, freight arrived on a truck belonging to a different MC. Filed by a broker in Texas.", r:"No carrier response."},{d:"Jul 2026", t:"Load held hostage. Carrier demanded $900 above rate con before releasing freight at delivery. Filed by a broker in California.", r:"Carrier response: broker misrepresented the weight. No documentation attached."},{d:"Mar 2026", t:"Double brokering. Paid lumper fee was never passed to the receiving dock; freight delivered by unknown carrier.", r:"No carrier response."}],
+    answer:"decline", why:"Contact info matches and insurance is current, which is exactly why this one catches new brokers. Three FreightGuard reports in seven months, two for double brokering and one hostage load, plus a reinstated authority. Automatic decline, and add to the do-not-use list." },
+  { name:"Cedar Line Trucking LLC", dba:"", mc:"MC-778910", dot:"DOT 2456620", auth:"Active since August 2018", reinst:"None", addr:"310 Mill Rd, Hickory, NC", fmcsaPhone:"(828) 555-0133", fmcsaEmail:"cedarline@cedarlinetrucking.com", callerPhone:"(828) 555-0133", callerEmail:"cedarline@cedarlinetrucking.com",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Carolina Transport Mutual", insEff:"Effective Jul 1, 2026", rating:"Satisfactory", drvOOS:"7.4%", vehOOS:"18.2%", units:"6 power units", insp:"23 inspections, 24 months", changes:"None in 12 months", fg:[],
+    answer:"approve", why:"Driver OOS is a little above average but not double it, and everything else is clean: 8-year authority, insurance current, no reports, contact matches. Approve for dry van freight; for high-value or reefer loads, ask about the driver OOS history first." },
+  { name:"Northstar Express Carriers", dba:"", mc:"MC-655201", dot:"DOT 1988340", auth:"Active since January 2015", reinst:"None", addr:"52 Frontage Rd, Fargo, ND", fmcsaPhone:"(701) 555-0119", fmcsaEmail:"dispatch@northstarexpress.com", callerPhone:"(701) 555-0119", callerEmail:"dispatch@northstarexpress.com",
+    autoLiab:"$1,000,000", cargo:"$100,000", insurer:"Plains Commercial Insurance", insEff:"Effective Mar 1, 2026", rating:"Conditional (rated Jun 2026)", drvOOS:"11.9%", vehOOS:"44.3%", units:"14 power units", insp:"71 inspections, 24 months", changes:"Safety rating downgraded Jun 2026", fg:[],
+    answer:"decline", why:"No fraud here, but a Conditional safety rating and out-of-service rates more than double the national average are a hard stop. Half their trucks fail roadside inspections. That is your freight sitting at a scale house. Decline." }
+];
+
+COURSE.push({
+  id:"day3", label:"Fraud and carrier vetting", short:"Day 3", day:3, fraud:true,
+  slides:[
+    {h:"The day that protects the money", k:"Day 3", html:`
+      <div class="hazard big"><h3>Nobody books a carrier until this day is passed</h3>
+        <p>Every other skill in this course makes a broker money. This one keeps it. A single double-brokered load can cost a broker $30,000 to $150,000 in stolen freight, a lost customer, and legal exposure. Scammers target new brokers specifically because new brokers want to cover the load and do not yet know what wrong looks like.</p>
+        <p>By the end of today you will be able to vet a carrier end to end, recognize the four common fraud patterns on sight, and pass the screening lab.</p></div>`},
+    {h:"Regulatory basics", html:`
+      <ul>
+        <li><strong>FMCSA</strong> issues operating authority (the MC number) and the USDOT number. A carrier needs active authority, a BOC-3 process agent on file, and insurance on file.</li>
+        <li><strong>Brokers</strong> need their own authority, a $75,000 surety bond (BMC-84) or trust (BMC-85), and a signed broker-carrier agreement with every carrier they use.</li>
+        <li><strong>Insurance minimums:</strong> $750,000 auto liability is the federal floor. Vanir National and most shippers require $1,000,000 auto and $100,000 cargo. Reefer freight needs reefer breakdown coverage.</li>
+        <li><strong>Safety data:</strong> FMCSA SAFER and SMS show inspections, out-of-service rates, crashes and the safety rating. Conditional or Unsatisfactory is a hard stop.</li>
+      </ul>`},
+    {h:"The four fraud patterns", html:`
+      <div class="hazard"><h3>1. Double brokering</h3><p>The carrier you booked re-brokers your load to another carrier, usually at a lower rate, and often does not pay them. You lose control of the freight; the second carrier may hold it hostage; you may end up paying twice. Signs: a “carrier” with no trucks of their own, a different truck than the one on the rate con showing up at the dock, a driver who does not know the company name you booked.</p></div>
+      <div class="hazard"><h3>2. Carrier identity theft</h3><p>A scammer uses a real carrier’s MC number with a spoofed email and phone. The real carrier never knows. The freight is loaded on the scammer’s truck and disappears. Signs: contact info that does not match FMCSA, a free email domain, a callback number that is not the one on file, urgency.</p></div>
+      <div class="hazard"><h3>3. New authority or recently changed profile</h3><p>Authority under 6 months old (Vanir National’s minimum), recently reinstated authority, a mail-drop address, or a change of address, phone or officer in the last 30 days. Any one is a yellow flag. Two or more together is the fraud profile.</p></div>
+      <div class="hazard"><h3>4. Load board phishing</h3><p>Scammers scrape your postings and call claiming to be the carrier that “already booked it,” or email a fake rate con for signature to harvest your details. Only one carrier gets your rate con, and you send it to the FMCSA-listed email.</p></div>`},
+    {h:"The vetting checklist, every carrier, every time", html:`
+      <ol>
+        <li>MC and USDOT active on FMCSA; authority at least 6 months old (Vanir National minimum, no exceptions)</li>
+        <li>Safety rating Satisfactory or None, never Conditional or Unsatisfactory</li>
+        <li>COI verified by calling the insurance agent; $1M auto and $100K cargo minimum, and not cancelled</li>
+        <li>Phone and email match FMCSA records; callback completed on the FMCSA number</li>
+        <li>No fraud reports in the monitoring tool</li>
+        <li>Signed broker-carrier agreement and W-9 on file</li>
+        <li>Driver name, truck number and trailer number collected before dispatch</li>
+        <li>Equipment matches the load</li>
+      </ol>
+      <div class="hazard"><h3>The one rule that catches most identity theft</h3><p>Never call back on the number the caller gave you. Call the number listed on FMCSA. If the caller resists that, you have your answer.</p></div>`},
+    {h:"Vetting in Carrier411: what to read, in order", html:`
+      <ol>
+        <li><strong>Search by MC or DOT, never by name.</strong> Confirm legal name, DBA and address match what the caller said.</li>
+        <li><strong>Authority status and age.</strong> Vanir National requires a carrier to have been in business at least 6 months. In Carrier411, open the Authority section of the carrier’s profile. It lists common, contract and broker authority with the date each was granted, plus any revocations and reinstatements. Count the 6 months from the date the MC authority was <em>granted</em>, not from when the company was formed or the USDOT number was issued; those can be years older than the authority. If the authority was revoked and later reinstated, the clock restarts at the reinstatement date. A carrier that passes everything else but is 5 months old waits.</li>
+        <li><strong>Insurance.</strong> Auto liability and cargo amounts, insurer, effective and cancellation dates. Missing or cancelled cargo coverage is a stop. Then call the agent; filings lag.</li>
+        <li><strong>Safety.</strong> Driver OOS vs. national average (about 5 to 6%); vehicle OOS vs. about 20 to 22%. Double the average is a decline for valuable or reefer freight.</li>
+        <li><strong>FreightGuard reports.</strong> Incident reports from other brokers. Read the carrier’s rebuttal too. One old report with a credible response can be fine. Any double-brokering, theft or hostage report, or multiple reports, is an automatic decline.</li>
+        <li><strong>Contact info vs. caller.</strong> Phone and email on file vs. the phone and email in front of you.</li>
+        <li><strong>Recent changes.</strong> Address, phone, email, officer in the last 30 days.</li>
+        <li><strong>Add to monitoring, then document the check in the TMS.</strong></li>
+      </ol>
+      <p>The next slides are the screening lab. Seven profiles, laid out the way a vetting tool shows them. Decide approve or decline on each; the course grades you.</p>`},
+    {lab:0},{lab:1},{lab:2},{lab:3},{lab:4},{lab:5},{lab:6},
+    {h:"Lab debrief", html:`<div id="labDebrief"></div>
+      <div class="hazard"><h3>What the lab is teaching</h3>
+        <p>Fraud rarely announces itself with one obvious failure. Ironclad had current insurance and matching contact info. Apex had a valid COI. Summit Peak looked perfect until the insurance block. The habit that protects you is reading every line, every time, in the same order, and treating two yellow flags as a red one.</p></div>`}
+  ],
+  quiz:[
+    {
+        "q": "Carrier’s email is Gmail and phone differs from FMCSA. You:",
+        "o": [
+            "Book if rate is good",
+            "Confirm MC and proceed",
+            "Hang up; call the FMCSA-listed number",
+            "Send rate con to both emails"
+        ],
+        "a": 2,
+        "e": "Mismatched contact is the identity-theft signal. The FMCSA callback is the check."
+    },
+    {
+        "q": "Automatic decline regardless of anything else:",
+        "o": [
+            "2-year authority",
+            "One 2022 late-delivery report with rebuttal",
+            "A FreightGuard report for double brokering",
+            "Driver OOS of 6%"
+        ],
+        "a": 2,
+        "e": "Double brokering, theft or hostage reports are hard stops."
+    },
+    {
+        "q": "Vanir National’s minimum insurance for a dry van load:",
+        "o": [
+            "$750K auto only",
+            "$1M auto and $100K cargo",
+            "$500K cargo",
+            "$2M auto"
+        ],
+        "a": 1,
+        "e": "Federal floor is $750K; ours is $1M/$100K."
+    },
+    {
+        "q": "A COI PDF looks good. Before dispatch you:",
+        "o": [
+            "File it",
+            "Call the insurance agent to verify",
+            "Check the website",
+            "Ask the driver"
+        ],
+        "a": 1,
+        "e": "PDFs are faked and filings lag."
+    },
+    {
+        "q": "Conditional rating, 44% vehicle OOS, current insurance, no reports. You:",
+        "o": [
+            "Approve",
+            "Approve for van only",
+            "Decline; Conditional and double-average OOS are hard stops",
+            "Approve at a lower rate"
+        ],
+        "a": 2,
+        "e": "Vetting is more than fraud."
+    },
+    {
+        "q": "Driver arrives in a truck with a different company name than the rate con. Most likely:",
+        "o": [
+            "Normal",
+            "Double brokering",
+            "FMCSA error",
+            "Shipper error"
+        ],
+        "a": 1,
+        "e": "Stop loading, call the booked carrier on the FMCSA number, escalate."
+    },
+    {
+        "q": "Vanir National’s minimum time in business, and where to verify it in Carrier411:",
+        "o": [
+            "30 days, USDOT date",
+            "6 months from MC authority grant date in the Authority section",
+            "1 year from formation",
+            "No minimum"
+        ],
+        "a": 1,
+        "e": "Count from the authority grant date; a reinstatement restarts the clock."
+    },
+    {
+        "q": "Authority 45 days old, address changed 20 days ago, caller pushing for the rate con in 10 minutes:",
+        "o": [
+            "Hungry new carrier",
+            "Two flags plus urgency: decline and escalate",
+            "Fine if insured",
+            "Fine at lower rate"
+        ],
+        "a": 1,
+        "e": "Urgency is how scammers get you to skip steps."
+    },
+    {
+        "q": "How many FreightGuard reports trigger automatic decline?",
+        "o": [
+            "Any at all",
+            "Only last 30 days",
+            "Any double-brokering, theft or hostage report, or multiple of any kind",
+            "Five or more"
+        ],
+        "a": 2,
+        "e": "Severity and pattern matter."
+    },
+    {
+        "q": "Authority was revoked and reinstated 4 months ago; originally granted 5 years ago. Time in business for our purposes:",
+        "o": [
+            "5 years",
+            "4 months",
+            "Does not matter",
+            "1 year"
+        ],
+        "a": 1,
+        "e": "The clock restarts at reinstatement; 4 months is under our 6-month minimum."
+    },
+    {
+        "q": "National average driver out-of-service rate is roughly:",
+        "o": [
+            "1%",
+            "5 to 6%",
+            "15%",
+            "25%"
+        ],
+        "a": 1,
+        "e": "About 5 to 6%."
+    },
+    {
+        "q": "National average vehicle out-of-service rate is roughly:",
+        "o": [
+            "2%",
+            "8%",
+            "20 to 22%",
+            "50%"
+        ],
+        "a": 2,
+        "e": "About 20 to 22%."
+    },
+    {
+        "q": "Who is legally responsible for arranging a process agent (BOC-3)?",
+        "o": [
+            "The shipper",
+            "The carrier and the broker each file their own",
+            "Only brokers",
+            "Only carriers"
+        ],
+        "a": 1,
+        "e": "Both carriers and brokers need a BOC-3 on file."
+    },
+    {
+        "q": "Reefer loads additionally require:",
+        "o": [
+            "Hazmat endorsement",
+            "Reefer breakdown coverage",
+            "Flatbed insurance",
+            "Nothing extra"
+        ],
+        "a": 1,
+        "e": "Standard cargo policies often exclude reefer breakdown."
+    },
+    {
+        "q": "Which address is a fraud signal?",
+        "o": [
+            "A rural route",
+            "A mail-drop or virtual office suite",
+            "A truck stop",
+            "An industrial park"
+        ],
+        "a": 1,
+        "e": "Mail drops are common in identity theft and double brokering."
+    },
+    {
+        "q": "You post a load and a caller says they “already booked it” with your coworker. You:",
+        "o": [
+            "Send them the rate con",
+            "Verify in the TMS and with the coworker before sending anything",
+            "Trust them",
+            "Give them the pickup number"
+        ],
+        "a": 1,
+        "e": "Load board phishing. One carrier gets a rate con, sent to the FMCSA email."
+    },
+    {
+        "q": "Where should the rate con be sent?",
+        "o": [
+            "Whatever email the caller gives",
+            "The email on file with FMCSA, after the callback",
+            "A text message",
+            "The driver’s phone"
+        ],
+        "a": 1,
+        "e": "Send to the verified address."
+    },
+    {
+        "q": "Before dispatch, you must collect:",
+        "o": [
+            "Driver name, phone, truck and trailer numbers",
+            "Driver’s home address",
+            "Carrier’s tax return",
+            "Nothing"
+        ],
+        "a": 0,
+        "e": "These let you verify the truck at the dock."
+    },
+    {
+        "q": "Who is the safest party to confirm insurance with?",
+        "o": [
+            "The carrier’s dispatcher",
+            "The insurance agent listed on the COI",
+            "The driver",
+            "A load board profile"
+        ],
+        "a": 1,
+        "e": "Call the agent directly."
+    },
+    {
+        "q": "A carrier’s safety rating shows “None.” This means:",
+        "o": [
+            "Automatic decline",
+            "Not yet rated; acceptable if everything else checks out",
+            "Unsatisfactory",
+            "Conditional"
+        ],
+        "a": 1,
+        "e": "Many small carriers are unrated. Conditional or Unsatisfactory are the stops."
+    },
+    {
+        "q": "Why do scammers target new brokers?",
+        "o": [
+            "They pay faster",
+            "They want to cover the load and do not yet recognize warning signs",
+            "They have bigger loads",
+            "They do not"
+        ],
+        "a": 1,
+        "e": "Eager and inexperienced."
+    },
+    {
+        "q": "A load is at the dock and you suspect double brokering. First move:",
+        "o": [
+            "Let it load; sort it out later",
+            "Stop loading, call the booked carrier on the FMCSA number, escalate",
+            "Pay the driver extra",
+            "Cancel with the customer"
+        ],
+        "a": 1,
+        "e": "Control of the freight is the priority."
+    },
+    {
+        "q": "The vetting checklist is completed:",
+        "o": [
+            "Before dispatch, every carrier, every time",
+            "After the first load",
+            "Only for new carriers",
+            "When a senior broker asks"
+        ],
+        "a": 0,
+        "e": "No exceptions."
+    },
+    {
+        "q": "After approving a carrier in Carrier411 you should:",
+        "o": [
+            "Do nothing more",
+            "Add them to monitoring and document the check in the TMS",
+            "Delete the profile",
+            "Email the shipper"
+        ],
+        "a": 1,
+        "e": "Monitoring alerts you to lapses while your freight is on their truck."
+    },
+    {
+        "q": "One FreightGuard report from 3 years ago for a late delivery with a credible rebuttal is:",
+        "o": [
+            "Automatic decline",
+            "Context, not a pattern; can approve with a note",
+            "Reason to call the police",
+            "Irrelevant to document"
+        ],
+        "a": 1,
+        "e": "Read the rebuttal; note it in the TMS."
+    }
+]
+});
+
+// ---------- DAY 4: PRICING ----------
+COURSE.push({
+  id:"day4", label:"Pricing and posting", short:"Day 4", day:4,
+  slides:[
+    {h:"Two numbers, two decisions", k:"Day 4", html:`
+      <p class="lead">Every load has a customer rate and a carrier rate. They are set by different logic. The customer rate is what the market and your margin target say the shipper should pay. The posted rate is a tactical number chosen to get the phone to ring at the right price.</p>
+      <p>Today you learn to pull a lane in DAT RateView, adjust it for the real world, build a quote, and decide what to post.</p>`},
+    {h:"What moves the carrier rate", html:`
+      <ul>
+        <li><strong>Direction.</strong> Outbound from freight-rich markets (Chicago, Dallas, Atlanta) is cheap. Outbound from freight-poor markets (Florida, Denver, the Northeast) is expensive because the truck has to come back empty.</li>
+        <li><strong>Equipment.</strong> Reefer and flatbed run 15 to 30% above dry van.</li>
+        <li><strong>Timing.</strong> Same-day freight, end of month and produce season each add 5 to 15%. Monday and Friday pickups typically run cheaper: trucks are repositioning after the weekend and hunting for a load to get home before it.</li>
+        <li><strong>Freight details.</strong> Multi-stop, driver assist, residential, hazmat, long dwell at the shipper.</li>
+        <li><strong>Fuel.</strong> Rates are quoted all-in or linehaul plus a fuel surcharge tied to the DOE weekly diesel index.</li>
+        <li><strong>Market cycle.</strong> In a tight market carriers reject contract freight for spot; in a soft market shippers push loads to the spot board. Know which one you are in.</li>
+      </ul>`},
+    {h:"Pricing a lane in DAT RateView", html:`
+      <ol>
+        <li><strong>Enter the lane and equipment.</strong> Origin, destination, van/reefer/flatbed. Rates are by market area, not exact town.</li>
+        <li><strong>Pick the timeframe.</strong> 7-day and 15-day for freight moving this week. If the 7-day is well above the 30-day, the market is tightening; price high.</li>
+        <li><strong>Read the three numbers.</strong> Average rate per mile, the low-to-high range, and the all-in total. The average is where a reasonable carrier books; the high end is what you pay when trucks are scarce.</li>
+        <li><strong>Check the sample size.</strong> Under about 10 reports, the number is unreliable. Widen the area or lean on Vanir National’s own lane history.</li>
+        <li><strong>Separate linehaul from fuel.</strong> Know which the customer expects.</li>
+        <li><strong>Adjust</strong> for direction, day of week, freight details and season (previous slide).</li>
+        <li><strong>Build the quote.</strong> Adjusted carrier cost plus Vanir National’s margin target, rounded clean. Write one sentence in the notes explaining the number.</li>
+        <li><strong>Cross-check</strong> against TMS history and the load board rate insight. Disagreement over 10% means find out why before quoting.</li>
+      </ol>
+      <div class="callout">RateView tells you what the truck costs. It does not tell you what to charge the shipper. Your margin target does that.</div>`},
+    {h:"Knowing what rate to post", html:`
+      <ol>
+        <li><strong>Start at the RateView average</strong> for the lane and timeframe.</li>
+        <li><strong>Check truck-to-load ratio.</strong> Over 3 loads per truck: carriers have leverage, post at or above average. Under 1: trucks are hunting, post 5 to 10% under and let them come to you.</li>
+        <li><strong>Post a rate or leave it blank?</strong> A posted rate filters out carriers who will not take it. A blank gets more calls and lets you anchor live. Tight market: post it. Soft market: consider leaving it off.</li>
+        <li><strong>Post below your walk-away.</strong> Max carrier pay = customer rate minus margin floor. Post 5 to 10% below that so you have room to move.</li>
+        <li><strong>Post early and refresh.</strong> Next-day freight posted by 7 a.m., refreshed every 30 to 60 minutes. Call preferred carriers before relying on the board.</li>
+        <li><strong>Read the response.</strong> No calls in 45 minutes on next-day freight: too low, raise in $50 to $100 steps. Fifteen calls in ten minutes: you overpaid, book a vetted carrier fast and note the lane.</li>
+        <li><strong>Firmness drops as the clock runs.</strong> 24 hours out, hold your number. 4 hours out, pay the market.</li>
+      </ol>`},
+    {h:"Worked example", html:`
+      <p class="lead">Dry van, Atlanta to Jacksonville, 350 miles, Thursday pickup, Friday delivery.</p>
+      <table><tr><th>Step</th><th>Number</th></tr>
+      <tr><td>RateView 7-day average</td><td>$2.05 per mile, $718 all-in; range $1.70 to $2.45</td></tr>
+      <tr><td>Adjustment</td><td>Atlanta outbound is a strong market; carrier should book near average. Estimated cost $725</td></tr>
+      <tr><td>Customer quote at 15% target margin</td><td>$850</td></tr>
+      <tr><td>Margin floor 10% → maximum carrier pay</td><td>$765</td></tr>
+      <tr><td>Post at</td><td>$700; expect to book $700 to $750</td></tr>
+      <tr><td>If no calls by 10 a.m.</td><td>Move to $740</td></tr></table>
+      <p>The customer sees one number. You are managing three.</p>`},
+    {h:"Negotiating with carriers", html:`
+      <ul>
+        <li>Confirm equipment, location and date before talking rate. Then name your number first, with a reason behind it: “I’ve got $1,850 on it, no-touch, drop at the receiver.” You set the anchor; the carrier reacts to it.</li>
+        <li>Anchor low but credible. Insulting offers end the call and the relationship; a fair opening number with room to move gets the truck.</li>
+        <li>Trade, do not concede: more money for a faster pickup, flexible delivery or quick pay.</li>
+        <li>Sell the load: easy shipper, drop trailer, no-touch, good backhaul market.</li>
+        <li>Know your walk-away before you dial. Silence after a number is a tool.</li>
+        <li>Pay on time, answer the phone, never lie about the freight. Carriers talk to each other.</li>
+      </ul>`}
+  ],
+  quiz:[
+    {
+        "q": "7-day average $2.40, 30-day $2.05. The lane is:",
+        "o": [
+            "Softening",
+            "Tightening; price high",
+            "Flat",
+            "Unreliable"
+        ],
+        "a": 1,
+        "e": "Short-term above long-term means rates are rising."
+    },
+    {
+            "q": "The customer quote is built from:",
+            "o": [
+                    "The carrier’s asking price plus nothing",
+                    "Adjusted carrier cost plus Vanir National’s margin target",
+                    "The shipper’s budget",
+                    "Last year’s rate"
+            ],
+            "a": 1,
+            "e": "Cost, then margin, rounded clean."
+    },
+    {
+            "q": "Your maximum carrier pay on a load is:",
+            "o": [
+                    "Whatever the carrier asks",
+                    "The customer rate minus the margin floor",
+                    "The RateView high",
+                    "The posted rate"
+            ],
+            "a": 1,
+            "e": "Know your walk-away before you dial."
+    },
+    {
+        "q": "4 loads per truck on the board. You:",
+        "o": [
+            "Post 10% under",
+            "Post at or above average",
+            "Leave blank and wait",
+            "Lower the customer rate"
+        ],
+        "a": 1,
+        "e": "Scarce trucks; carriers have leverage."
+    },
+    {
+        "q": "Florida outbound prices above average because:",
+        "o": [
+            "Weight laws",
+            "Trucks return empty from a freight-poor market",
+            "Fuel",
+            "Fast payers"
+        ],
+        "a": 1,
+        "e": "Empty return is priced in."
+    },
+    {
+        "q": "Posted at 7 a.m., no calls by 7:50 on next-day freight:",
+        "o": [
+            "Wait until noon",
+            "Raise $50 to $100; call preferred carriers",
+            "Cancel",
+            "Lower the rate"
+        ],
+        "a": 1,
+        "e": "Silence means too low."
+    },
+    {
+        "q": "RateView primarily tells you:",
+        "o": [
+            "What to charge the shipper",
+            "Roughly what the truck costs",
+            "Which carriers are available",
+            "The customer’s budget"
+        ],
+        "a": 1,
+        "e": "Carrier-cost tool."
+    },
+    {
+        "q": "Under about how many rate reports is a RateView number unreliable?",
+        "o": [
+            "2",
+            "10",
+            "50",
+            "200"
+        ],
+        "a": 1,
+        "e": "Widen the area or use your own history."
+    },
+    {
+        "q": "Which timeframe matters most for freight moving this week?",
+        "o": [
+            "7 and 15-day",
+            "30-day",
+            "90-day",
+            "1-year"
+        ],
+        "a": 0,
+        "e": "Recent data reflects the current market."
+    },
+    {
+            "q": "When a customer counters your quote lower, you should:",
+            "o": [
+                    "Accept immediately",
+                    "Check whether you can still cover the truck above the margin floor before agreeing",
+                    "Refuse always",
+                    "Lower the carrier rate on the rate con after booking"
+            ],
+            "a": 1,
+            "e": "Decide in advance where you walk."
+    },
+    {
+            "q": "The margin floor is:",
+            "o": [
+                    "A target to aim for",
+                    "The minimum margin below which you walk away from the load",
+                    "The RateView average",
+                    "A load board setting"
+            ],
+            "a": 1,
+            "e": "Your trainer gives you Vanir National’s number."
+    },
+    {
+        "q": "You post below your walk-away because:",
+        "o": [
+            "It is required",
+            "It leaves room to negotiate up",
+            "Carriers prefer it",
+            "It increases margin"
+        ],
+        "a": 1,
+        "e": "Post 5 to 10% under the max."
+    },
+    {
+        "q": "Fifteen calls in ten minutes on a posting means:",
+        "o": [
+            "Perfect price",
+            "You overpaid; book a vetted carrier fast and note it",
+            "Nobody wants it",
+            "The board is broken"
+        ],
+        "a": 1,
+        "e": "Too much interest means the rate is high."
+    },
+    {
+        "q": "Monday and Friday pickups typically:",
+        "o": [
+            "Cost less than midweek",
+            "Cost 5 to 15% more",
+            "Are free",
+            "Cannot be covered"
+        ],
+        "a": 0,
+        "e": "Trucks repositioning after the weekend and hunting for a load home before it make Monday and Friday cheaper."
+    },
+    {
+        "q": "Which is a strong outbound market with cheap rates?",
+        "o": [
+            "Denver",
+            "Florida",
+            "Chicago",
+            "Northeast"
+        ],
+        "a": 2,
+        "e": "Freight-rich markets price low outbound."
+    },
+    {
+        "q": "The FSC is tied to:",
+        "o": [
+            "DOE weekly diesel index",
+            "Stock market",
+            "Carrier’s choice",
+            "Load board"
+        ],
+        "a": 0,
+        "e": "Fuel surcharge follows the DOE index."
+    },
+    {
+        "q": "Contract rates versus spot:",
+        "o": [
+            "Fixed 6 to 12 months and lag the spot market",
+            "Change daily",
+            "Are always cheaper",
+            "Do not exist"
+        ],
+        "a": 0,
+        "e": "Contract lags spot."
+    },
+    {
+        "q": "In a tight market, carriers tend to:",
+        "o": [
+            "Honor all contracts",
+            "Reject contract freight for spot",
+            "Lower rates",
+            "Stop working"
+        ],
+        "a": 1,
+        "e": "Spot pays more when trucks are scarce."
+    },
+    {
+        "q": "Before talking rate, confirm the carrier’s:",
+        "o": [
+            "Favorite lanes",
+            "Equipment, location and availability",
+            "Fuel card",
+            "Factoring company"
+        ],
+        "a": 1,
+        "e": "Then ask what they need."
+    },
+    {
+        "q": "Who names a price first on a carrier call?",
+        "o": [
+            "You, the broker",
+            "The carrier",
+            "Nobody",
+            "The shipper"
+        ],
+        "a": 0,
+        "e": "You set the anchor with a credible number and a reason behind it; the carrier negotiates from there."
+    },
+    {
+        "q": "The best way to make a concession:",
+        "o": [
+            "Just lower the rate",
+            "Trade it for something: faster pickup, flexible delivery, quick pay",
+            "Refuse always",
+            "Ask the shipper to pay"
+        ],
+        "a": 1,
+        "e": "Trade, do not give."
+    },
+    {
+        "q": "At 4 hours before pickup with no truck, you:",
+        "o": [
+            "Hold your number",
+            "Pay the market",
+            "Cancel",
+            "Wait"
+        ],
+        "a": 1,
+        "e": "Firmness drops as the clock runs."
+    },
+    {
+        "q": "Cross-checking RateView against TMS history is for:",
+        "o": [
+            "Fun",
+            "Catching a 10%+ disagreement before quoting",
+            "FMCSA compliance",
+            "Carrier pay"
+        ],
+        "a": 1,
+        "e": "Find out why before quoting."
+    },
+    {
+        "q": "Writing a one-sentence reason behind each quote helps because:",
+        "o": [
+            "It is required by law",
+            "You can defend the number when the customer pushes back",
+            "It raises the rate",
+            "Carriers like it"
+        ],
+        "a": 1,
+        "e": "A reason, not a guess."
+    },
+    {
+        "q": "Produce season primarily spikes:",
+        "o": [
+            "Flatbed rates in the Northeast",
+            "Reefer rates in the Southeast and California",
+            "Van rates in Alaska",
+            "Rail rates"
+        ],
+        "a": 1,
+        "e": "Reefer capacity gets scarce."
+    }
+]
+});
+
+// ---------- DAY 5: RUNNING THE LOAD ----------
+COURSE.push({
+  id:"day5", label:"Running the load", short:"Day 5", day:5,
+  slides:[
+    {h:"From the first call to the paid invoice", k:"Day 5", html:`
+      <p class="lead">Today ties the week together: the 12 steps of a load, the operations rhythm, the five exceptions you will handle every month, and the paperwork that turns a delivered load into margin in the bank.</p>`},
+    {h:"The 12 steps of a load", html:`
+      <ol>
+        <li><strong>Shipper request:</strong> origin, destination, dates, commodity, weight, equipment, special needs. Confirm every detail.</li>
+        <li><strong>Quote</strong> in writing; get written acceptance or a PO number.</li>
+        <li><strong>Load entry</strong> in the TMS. The TMS record is the single source of truth.</li>
+        <li><strong>Post and source:</strong> preferred carriers first, then the board.</li>
+        <li><strong>Negotiate and vet:</strong> rate, then the full checklist, then driver, truck and trailer numbers.</li>
+        <li><strong>Rate confirmation</strong> signed and returned before dispatch. No signed rate con, no dispatch.</li>
+        <li><strong>Dispatch:</strong> driver has pickup number, appointment time and contact. Tracking set.</li>
+        <li><strong>Pickup:</strong> confirm loaded, piece count, seal number; photo of the signed BOL.</li>
+        <li><strong>In transit:</strong> check calls or tracking twice a day minimum.</li>
+        <li><strong>Delivery:</strong> confirm delivered; collect the signed POD; note any exceptions on it.</li>
+        <li><strong>Carrier pay:</strong> invoice, BOL and POD verified against the rate con.</li>
+        <li><strong>Customer invoice</strong> with POD attached; follow up on aging at 30 days.</li>
+      </ol>`},
+    {h:"Communicate before you are asked", html:`
+      <p class="lead">The customer should never learn about a problem from their receiver. If a truck will be late, the customer hears it from Vanir National first, with a new ETA and a plan.</p>
+      <p>Tracking options in order of reliability: ELD or telematics integration, tracking app (Macropoint, Trucker Tools, project44), driver check calls. Set the expectation in the rate con. A driver who will not track is a red flag.</p>
+      <p>Every call, every ETA change, every promise goes in the TMS notes with a timestamp. Six weeks later, in a claim or a dispute, the notes are the only thing anyone believes.</p>`},
+    {h:"The five exceptions", html:`
+      <div class="scroll"><table><tr><th>Exception</th><th>First 10 minutes</th><th>Who pays</th></tr>
+      <tr><td>Truck falls off</td><td>Repost higher, call preferred carriers, tell the customer the truth and a new ETA</td><td>Vanir National absorbs the increase unless the customer agrees to share</td></tr>
+      <tr><td>Driver running late</td><td>Get the real ETA from the driver; notify receiver and customer; reschedule</td><td>Depends on cause; shipper-caused delay is billable</td></tr>
+      <tr><td>Detention</td><td>Record in and out times on the BOL or a dock sign-off</td><td>Shipper or receiver, passed through to the carrier after free time (usually 2 hours)</td></tr>
+      <tr><td>Breakdown</td><td>Confirm driver safety; location and repair ETA; decide repower vs. wait; update hourly</td><td>Original carrier covers recovery in most agreements</td></tr>
+      <tr><td>Shortage or damage</td><td>Receiver notes specifics on the POD; photos; driver does not leave without a signed POD</td><td>Carrier’s cargo insurance via the claims process</td></tr></table></div>
+      <p>Escalate immediately for cargo theft or fraud in progress, hazmat incidents, accidents, or a customer threatening to pull business.</p>`},
+    {h:"Accessorials you must bill", html:`
+      <div class="scroll"><table><tr><th>Accessorial</th><th>Typical charge</th><th>Proof required</th></tr>
+      <tr><td>Detention</td><td>$50 to $100 per hour after 2 free hours</td><td>In/out times on BOL or dock sign-off</td></tr>
+      <tr><td>Layover</td><td>$250 to $500 per night</td><td>Appointment confirmation showing the delay was not the carrier’s</td></tr>
+      <tr><td>TONU</td><td>$150 to $350</td><td>Cancellation notice with timestamp</td></tr>
+      <tr><td>Lumper</td><td>Pass-through at cost</td><td>Lumper receipt</td></tr>
+      <tr><td>Driver assist</td><td>$75 to $200</td><td>On rate con or approved in writing</td></tr>
+      <tr><td>Extra stop</td><td>$75 to $150 per stop</td><td>Rate con</td></tr></table></div>
+      <p>An accessorial not agreed in writing before the load moves is a fight afterward. Put standard terms on every rate con and every customer quote.</p>`},
+    {h:"Claims and paying the right party", html:`
+      <p><strong>Cargo claims (Carmack Amendment):</strong> the carrier is liable from pickup to delivery unless they prove an exception. Receiver notes damage on the POD; broker notifies the carrier in writing within 24 hours; shipper files within 9 months with invoice value, photos and POD; carrier has 30 days to acknowledge and 120 days to resolve. Vanir National facilitates and documents; we do not pay out of pocket unless our contract says so.</p>
+      <p><strong>Carrier pay:</strong> verify the invoice against the rate con, POD clean, no open claim. If the carrier factors, pay the factoring company per the notice of assignment, never the carrier directly. Paying the wrong party means paying twice.</p>
+      <p><strong>Collections:</strong> invoice same day as POD with POD attached. 30-day reminder, 45-day call, 60-day escalation. Credit-check new shippers before the first load; one $10,000 unpaid invoice erases the margin on 30 good loads.</p>`}
+  ],
+  quiz:[
+    {
+        "q": "A driver refuses the tracking app and says “just call me.” This is:",
+        "o": [
+            "Normal",
+            "A red flag worth escalating before dispatch",
+            "Fine if rate con silent",
+            "Fine for short hauls"
+        ],
+        "a": 1,
+        "e": "Refusal to track is a fraud and reliability signal."
+    },
+    {
+        "q": "Damage found after a clean signed POD. Recovery is:",
+        "o": [
+            "Easy",
+            "Much harder; concealed damage is hard to prove",
+            "Automatic",
+            "Broker’s responsibility"
+        ],
+        "a": 1,
+        "e": "Train receivers to inspect before signing."
+    },
+    {
+        "q": "Carrier has a notice of assignment with a factoring company. Pay:",
+        "o": [
+            "The carrier",
+            "The factoring company",
+            "Whoever invoices first",
+            "Split"
+        ],
+        "a": 1,
+        "e": "Paying the carrier does not satisfy the debt."
+    },
+    {
+        "q": "Signed at delivery and required to bill the customer:",
+        "o": [
+            "Rate con",
+            "BOL at pickup",
+            "Proof of delivery",
+            "COI"
+        ],
+        "a": 2,
+        "e": "No POD, no invoice."
+    },
+    {
+        "q": "4 hours 15 minutes at the shipper, 2 free, $75/hour. Billable:",
+        "o": [
+            "$75",
+            "$150",
+            "$168.75",
+            "$318.75"
+        ],
+        "a": 2,
+        "e": "2.25 × $75, with documented times."
+    },
+    {
+        "q": "Truck falls off 3 hours before pickup. First:",
+        "o": [
+            "Wait",
+            "Repost higher, call preferred carriers, tell the customer",
+            "Cancel with shipper",
+            "Call insurance"
+        ],
+        "a": 1,
+        "e": "Cover, communicate, document."
+    },
+    {
+        "q": "The customer should learn about a late truck from:",
+        "o": [
+            "Their receiver",
+            "Vanir National first, with new ETA",
+            "The driver",
+            "Nobody"
+        ],
+        "a": 1,
+        "e": "Never from the dock."
+    },
+    {
+        "q": "No signed rate confirmation means:",
+        "o": [
+            "Dispatch on verbal",
+            "No dispatch",
+            "Preferred carriers only",
+            "Under $1,000 only"
+        ],
+        "a": 1,
+        "e": "No signed rate con, no dispatch."
+    },
+    {
+        "q": "Under Carmack, the shipper must file a written claim within:",
+        "o": [
+            "30 days",
+            "90 days",
+            "9 months",
+            "2 years"
+        ],
+        "a": 2,
+        "e": "Nine months."
+    },
+    {
+        "q": "After a claim is filed, the carrier must acknowledge within:",
+        "o": [
+            "24 hours",
+            "30 days",
+            "120 days",
+            "1 year"
+        ],
+        "a": 1,
+        "e": "30 days to acknowledge, 120 to resolve."
+    },
+    {
+        "q": "Detention free time is usually:",
+        "o": [
+            "30 minutes",
+            "1 hour",
+            "2 hours",
+            "4 hours"
+        ],
+        "a": 2,
+        "e": "Two hours."
+    },
+    {
+        "q": "TONU stands for:",
+        "o": [
+            "Truck on new unit",
+            "Truck ordered not used",
+            "Time of night unloading",
+            "Terms of non-use"
+        ],
+        "a": 1,
+        "e": "A cancellation fee."
+    },
+    {
+        "q": "A lumper fee is:",
+        "o": [
+            "A broker fee",
+            "Third-party unloading labor, passed through at cost with a receipt",
+            "A fuel charge",
+            "A fine"
+        ],
+        "a": 1,
+        "e": "Common at grocery warehouses."
+    },
+    {
+        "q": "Minimum check-call or tracking frequency in transit:",
+        "o": [
+            "Once a week",
+            "Twice a day",
+            "Only at delivery",
+            "Never"
+        ],
+        "a": 1,
+        "e": "More for high-value or time-critical."
+    },
+    {
+        "q": "At pickup you confirm:",
+        "o": [
+            "Loaded, piece count, seal number; photo of signed BOL",
+            "Driver’s lunch",
+            "Fuel level",
+            "Nothing"
+        ],
+        "a": 0,
+        "e": "Report shortages immediately."
+    },
+    {
+        "q": "The single source of truth for a load is:",
+        "o": [
+            "Your memory",
+            "The TMS record",
+            "A text thread",
+            "The load board"
+        ],
+        "a": 1,
+        "e": "Everything goes in the TMS."
+    },
+    {
+        "q": "An accessorial not agreed in writing before the load moves is:",
+        "o": [
+            "Automatically paid",
+            "A fight afterward",
+            "Illegal",
+            "Free"
+        ],
+        "a": 1,
+        "e": "Standard terms on every rate con and quote."
+    },
+    {
+        "q": "On a breakdown, your first action is:",
+        "o": [
+            "Repower immediately",
+            "Confirm driver safety, get location and repair ETA",
+            "Bill the carrier",
+            "Call the shipper’s CEO"
+        ],
+        "a": 1,
+        "e": "Safety, facts, then decide repower vs. wait."
+    },
+    {
+        "q": "Who typically covers recovery cost on a breakdown?",
+        "o": [
+            "Vanir National",
+            "The original carrier under most agreements",
+            "The shipper",
+            "The receiver"
+        ],
+        "a": 1,
+        "e": "Check the broker-carrier agreement."
+    },
+    {
+        "q": "Shipper-caused loading delay that makes the driver late is:",
+        "o": [
+            "The carrier’s fault",
+            "Billable to the shipper",
+            "Vanir National’s cost",
+            "Ignored"
+        ],
+        "a": 1,
+        "e": "Document the times."
+    },
+    {
+        "q": "Standard carrier payment terms are typically:",
+        "o": [
+            "Same day",
+            "30 days",
+            "90 days",
+            "6 months"
+        ],
+        "a": 1,
+        "e": "Quick pay is 2 to 5 days for a discount."
+    },
+    {
+        "q": "Before paying a carrier, verify:",
+        "o": [
+            "Invoice matches rate con, clean POD, no open claim",
+            "Driver’s mood",
+            "Fuel receipts",
+            "Nothing"
+        ],
+        "a": 0,
+        "e": "Then pay the correct party."
+    },
+    {
+        "q": "Collections cadence: friendly reminder at 30 days, then:",
+        "o": [
+            "Lawsuit",
+            "Call at 45, escalate at 60",
+            "Wait a year",
+            "Stop invoicing"
+        ],
+        "a": 1,
+        "e": "Track aging weekly."
+    },
+    {
+        "q": "Why credit-check new shippers?",
+        "o": [
+            "It is polite",
+            "One unpaid $10,000 invoice erases the margin on 30 loads",
+            "FMCSA requires it",
+            "Carriers ask"
+        ],
+        "a": 1,
+        "e": "Credit before the first load."
+    },
+    {
+        "q": "Escalate immediately for:",
+        "o": [
+            "Any late truck",
+            "Cargo theft or fraud in progress",
+            "A driver asking for directions",
+            "A rate question"
+        ],
+        "a": 1,
+        "e": "Theft, hazmat, accidents, customer threatening to leave."
+    }
+]
+});
+
+// ---------- FINAL EXAM ----------
+const FINAL = [
+  {q:"Gross margin percentage is calculated against:", o:["The carrier rate","The customer rate","Mileage","Linehaul only"], a:1},
+  {q:"A broker legally:", o:["Takes possession of freight","Arranges transportation and owns no trucks","Must own at least one truck","Is the same as a dispatcher"], a:1},
+  {q:"$2,310 on 1,050 miles is approximately:", o:["$1.95/mi","$2.20/mi","$2.45/mi","$2.75/mi"], a:1},
+  {q:"Produce, Georgia to Boston, 42,000 lbs. Equipment:", o:["Dry van","Reefer","Flatbed","Step deck"], a:1},
+  {q:"Steel coils, Gary, IN to Houston. Equipment:", o:["Dry van","Reefer","Flatbed","Box truck"], a:2},
+  {q:"Freight class is driven primarily by:", o:["Density","Distance","Day of week","Carrier choice"], a:0},
+  {q:"Partial/volume freight is typically:", o:["1 to 2 pallets","6 to 20 pallets","A full 26 pallets","Rail only"], a:1},
+  {q:"The federal minimum auto liability for carriers is $750,000. Vanir National requires:", o:["$750,000","$1,000,000 auto and $100,000 cargo","$500,000 and $50,000 cargo","$2,000,000"], a:1},
+  {q:"The single most reliable identity-theft check is:", o:["Asking for the MC number","Checking the carrier’s website","Calling back on the FMCSA-listed phone number","Requesting a COI PDF"], a:2},
+  {q:"Authority 30 days old plus an address change last week equals:", o:["A new carrier worth helping","The fraud profile; decline and escalate","Fine if insurance is current","Fine with a lower rate"], a:1},
+  {q:"A FreightGuard report for double brokering is:", o:["A judgment call","An automatic decline","Fine if older than a year","Irrelevant if insurance is current"], a:1},
+  {q:"Cargo insurance was cancelled 10 days ago; everything else is clean. You:", o:["Approve; auto liability is what matters","Decline until a new cargo COI is verified with the agent","Approve for dry van only","Approve with a signed waiver"], a:1},
+  {q:"National average driver out-of-service rate is roughly:", o:["1%","5 to 6%","15%","25%"], a:1},
+  {q:"A Conditional safety rating is:", o:["Acceptable for dry van","A hard stop","Acceptable with current insurance","Only relevant for hazmat"], a:1},
+  {q:"A different truck than the one on the rate con arrives at the dock. Most likely:", o:["Normal substitution","Double brokering; stop loading and escalate","FMCSA data error","Shipper error"], a:1},
+  {q:"A COI PDF is verified by:", o:["Reading it carefully","Calling the insurance agent listed","Checking the carrier’s website","Asking the driver"], a:1},
+  {q:"When should the vetting checklist be fully completed?", o:["Before dispatch, every carrier, every time","After the first load goes well","Only for new carriers","Only when a senior broker asks"], a:0},
+  {q:"Why do scammers target new brokers?", o:["New brokers pay faster","New brokers want to cover the load and do not yet recognize warning signs","New brokers have bigger loads","They do not; all brokers are targeted equally"], a:1},
+  {q:"RateView primarily tells you:", o:["What to charge the shipper","Roughly what the truck costs on the lane","Which carriers are available","The customer’s budget"], a:1},
+  {q:"The customer quote is built from:", o:["The carrier’s asking price","Adjusted carrier cost plus the margin target","The shipper’s budget","Last year’s rate"], a:1},
+  {q:"Maximum carrier pay on a load equals:", o:["Whatever the carrier asks","Customer rate minus the margin floor","The posted rate","The RateView high"], a:1},
+  {q:"Outbound Florida freight prices above average because:", o:["Florida fuel costs more","Trucks return empty from a freight-poor market","Florida shippers are slow payers","Weight limits are lower"], a:1},
+  {q:"Four loads per truck on the board means:", o:["Post 10% under average","Carriers have leverage; post at or above average","Leave rate blank","Cancel the load"], a:1},
+  {q:"No calls 45 minutes after posting next-day freight. You:", o:["Wait until afternoon","Raise $50 to $100 and call preferred carriers","Lower the rate","Cancel"], a:1},
+  {q:"On a carrier call, who names the price first?", o:["The carrier","You, the broker, with a reason behind the number","The shipper","Nobody"], a:1},
+  {q:"No signed rate confirmation means:", o:["Dispatch anyway if verbal agreement","No dispatch","Dispatch for preferred carriers only","Dispatch if under $1,000"], a:1},
+  {q:"The customer should learn about a late truck from:", o:["Their receiver","Vanir National, first, with a new ETA","The driver","Nobody until delivery"], a:1},
+  {q:"Detention: 5 hours at the dock, 2 free, $75/hour. Billable:", o:["$150","$225","$300","$375"], a:1},
+  {q:"A carrier has a notice of assignment on file. You pay:", o:["The carrier","The factoring company","The driver","Whoever calls first"], a:1},
+  {q:"Under Carmack, a shipper must file a written cargo claim within:", o:["30 days","90 days","9 months","2 years"], a:2},
+  {q:"The freight buyer at a mid-size shipper is usually the:", o:["CEO","Purchasing agent","Logistics or transportation manager","Receptionist"], a:2},
+  {q:"A new shipper typically converts after:", o:["1 call","2 to 3 touches","6 to 10 touches over 60 to 90 days","A year"], a:2},
+  {q:"On a first sales call you ask for:", o:["All their freight","One lane to quote","A contract","A plant tour"], a:1},
+  {q:"The best free source of shipper leads is:", o:["Purchased lists","Your carriers, asked who else they haul for","Billboards","Waiting for referrals"], a:1}
+];
+
+// ---------- DAY 6: SALES ----------
+COURSE.push({
+  id:"day6", label:"Landing shippers", short:"Day 6", day:6,
+  slides:[
+    {h:"Nothing happens until a shipper gives you a load", k:"Day 6", html:`
+      <p class="lead">Everything you learned this week is worthless without freight to move. Today is how you find shippers, what to say to them, the cycle that turns a cold name into an account, and the follow-up discipline that separates brokers who build a book from brokers who wash out.</p>
+      <div class="callout">The number that matters: a new shipper typically needs 6 to 10 touches over 60 to 90 days before the first load. Most new brokers quit after two. The ones who last are simply still calling when the shipper’s regular carrier falls off.</div>`},
+    {h:"Who actually buys freight", html:`
+      <p>The buyer is the person whose phone rings when a truck does not show up. Titles: logistics manager, transportation manager, shipping supervisor, traffic manager, plant manager at smaller plants. Not purchasing, not the CEO, not the receptionist.</p>
+      <p>The sweet spot for a new broker is 20 to 200 loads a month: enough freight to be worth the work, small enough that they still answer their own phone and have no procurement department between you and them.</p>
+      <p>What they care about, in order: the truck shows up, they hear about problems before their receiver does, the rate is fair, and the paperwork is clean. Price is fourth. Sell on the first three.</p>`},
+    {h:"Example shippers to target", html:`
+      <div class="scroll"><table><tr><th>Shipper type</th><th>Typical freight and equipment</th><th>Why they buy from brokers</th><th>Who to ask for</th></tr>
+      <tr><td>Mid-size food and beverage distributor</td><td>Palletized grocery, reefer and dry van, 30 to 150 loads a month</td><td>Volume swings weekly; needs surge capacity</td><td>Transportation or logistics manager</td></tr>
+      <tr><td>Building materials manufacturer</td><td>Lumber, roofing, drywall, flatbed and van</td><td>Seasonal spikes; flatbed is hard to source</td><td>Shipping manager or plant manager</td></tr>
+      <tr><td>Paper and packaging plant</td><td>Rolls and corrugated, dry van, heavy</td><td>Steady lanes; wants a dependable backup to contract carriers</td><td>Traffic manager</td></tr>
+      <tr><td>Produce grower or packer</td><td>Reefer, time-critical, heavy season</td><td>Cannot find enough reefers in season at any price</td><td>Sales coordinator or shipping office</td></tr>
+      <tr><td>Metals service center</td><td>Coils, bars, plate, flatbed with tarps</td><td>Specialized equipment, frequent one-offs</td><td>Shipping supervisor</td></tr>
+      <tr><td>Plastics or chemical manufacturer</td><td>Drums, totes, gaylords; van, some hazmat</td><td>Compliance headaches; pays for brokers who handle hazmat right</td><td>Logistics manager</td></tr>
+      <tr><td>Regional retailer or e-commerce DC</td><td>Inbound van freight from vendors</td><td>Inbound is usually unmanaged; vendors ship collect</td><td>Inbound logistics or DC manager</td></tr></table></div>
+      <p>Pick two of these verticals and go deep. A broker who knows the paper industry’s lanes, seasons and dock quirks wins against one who calls everyone.</p>`},
+    {h:"Sourcing new clients", html:`
+      <p class="lead">A prospect list is built, not bought. Target 50 qualified names in your first week on the desk and add 10 a week after that.</p>
+      <ul>
+        <li><strong>Data tools.</strong> ZoomInfo, LinkedIn Sales Navigator and industry directories, filtered by vertical, headcount and location. Export the logistics titles, not the executives.</li>
+        <li><strong>Drive the industrial parks.</strong> Dock doors, trailers in the yard and a truck entrance mean freight. Note the company, look up the buyer, call that afternoon.</li>
+        <li><strong>Ask your carriers.</strong> Every carrier you book hauls for other shippers. “Who else do you pick up from in that area?” is the best lead source in the industry and it is free.</li>
+        <li><strong>Work the consignees.</strong> Every delivery address on your loads is a company that receives freight and probably ships some too. Call them.</li>
+        <li><strong>Watch the load boards.</strong> Lanes posted repeatedly by other brokers reveal shippers with steady freight. Find the shipper behind the lane.</li>
+        <li><strong>Trade shows and associations.</strong> State manufacturing associations, produce expos, building-products shows. Go as a member, not a vendor.</li>
+        <li><strong>Lapsed and lost accounts.</strong> Vanir National’s TMS has shippers nobody has called in a year. Those are warm.</li>
+        <li><strong>Referrals.</strong> After a load goes well, ask the shipper who else they know who moves freight. People in logistics know each other.</li>
+      </ul>`},
+    {h:"The sales cycle", html:`
+      <div class="scroll"><table><tr><th>Stage</th><th>Goal</th><th>Typical time</th><th>Exit when</th></tr>
+      <tr><td>1. Prospect</td><td>Qualified name, title, direct line</td><td>Day 0</td><td>You have a real decision-maker to call</td></tr>
+      <tr><td>2. First contact</td><td>A conversation, not a pitch</td><td>Days 1 to 14</td><td>They confirm they ship truckload and how they book it today</td></tr>
+      <tr><td>3. Qualify</td><td>Lanes, volume, equipment, pain, who decides</td><td>Same call or next</td><td>You know one lane that hurts them</td></tr>
+      <tr><td>4. Quote a lane</td><td>One written quote, same day, with a reason behind the number</td><td>Days 14 to 45</td><td>They have your number in writing and a reason to compare</td></tr>
+      <tr><td>5. First load</td><td>Usually a problem load: a fall-off, a Friday, a lane nobody wants</td><td>Days 30 to 90</td><td>You deliver it flawlessly and over-communicate</td></tr>
+      <tr><td>6. Expand</td><td>Second lane, then regular freight</td><td>Months 2 to 6</td><td>You are on their weekly email of available loads</td></tr>
+      <tr><td>7. Account</td><td>Contract lanes, quarterly reviews, referrals</td><td>Month 6 and on</td><td>You are the first call when something goes wrong</td></tr></table></div>
+      <p>Ask for one lane, never the whole business. Shippers do not switch providers; they add a backup, and backups who perform become primaries.</p>`},
+    {h:"The first call", html:`
+      <p><strong>Open</strong> with your name, Vanir National, and one sentence on why them specifically: their lanes, their commodity, a customer near them. Under 15 seconds.</p>
+      <p><strong>Qualify</strong> with three questions: “Do you ship full truckload? Roughly how many loads a week? Who handles that for you today?”</p>
+      <p><strong>Find the pain:</strong> “When a truck falls off at 4 p.m. on a Friday, who do you call?” “Which lane is the hardest to cover right now?” “What does your current broker do that drives you crazy?”</p>
+      <p><strong>Ask for one lane</strong> to quote this week. <strong>Close</strong> by getting the email, committing to a same-day quote, and naming the day you will call back.</p>
+      <div class="callout">Objections: “We already have brokers” → “Most of our customers do. I am asking for one lane where your current option falls short so you can compare.” “Send me an email” → “Happy to. What is one lane you are quoting this week so the email is useful?” “We only use asset carriers” → “Understood. Keep my number for the Friday the asset carrier can’t cover.”</div>`},
+    {h:"Follow-up: the 90-day cadence", html:`
+      <p class="lead">The shipper’s regular carrier will fall off on a random day. Your only job in the cadence is to be the name they remember when it does. Every touch is logged in the CRM with the next action dated before you hang up.</p>
+      <div class="scroll"><table><tr><th>Touch</th><th>When</th><th>What</th></tr>
+      <tr><td>1</td><td>Day 1</td><td>First call. Ask for one lane.</td></tr>
+      <tr><td>2</td><td>Day 1</td><td>Same-day email: three sentences, their lane in the subject line, one ask, no attachment.</td></tr>
+      <tr><td>3</td><td>Day 4</td><td>Call back. “Did the quote land where you expected?”</td></tr>
+      <tr><td>4</td><td>Day 9</td><td>Value email: a one-line market note on their lane or region. No ask.</td></tr>
+      <tr><td>5</td><td>Day 15</td><td>Call. New angle: a different lane, a seasonal need, capacity for an upcoming week.</td></tr>
+      <tr><td>6</td><td>Day 24</td><td>LinkedIn connection with a one-line note, or a short voicemail.</td></tr>
+      <tr><td>7</td><td>Day 35</td><td>Call. “Anything fall through this month I could have covered?”</td></tr>
+      <tr><td>8</td><td>Day 50</td><td>Email with one proof point: a load you covered for a similar shipper.</td></tr>
+      <tr><td>9</td><td>Day 65</td><td>Call. Ask directly: “What would it take to get one load?”</td></tr>
+      <tr><td>10</td><td>Day 90</td><td>Re-qualify. Still a fit? Move to a 30-day check-in cadence, never off the list.</td></tr></table></div>
+      <p>Rules: never two emails in a row without a call between; always leave a voicemail with one specific reason to call back; a “no” means “not today” unless they tell you to stop. Then stop.</p>`},
+    {h:"The activity that builds a book", html:`
+      <table><tr><th>Daily</th><th>Target</th></tr>
+      <tr><td>Prospecting calls</td><td>30, in a protected two-hour block</td></tr>
+      <tr><td>Conversations with a decision-maker</td><td>5 to 8</td></tr>
+      <tr><td>Quotes sent</td><td>5 in month 1, 10 by month 3</td></tr>
+      <tr><td>New names added to the list</td><td>2</td></tr>
+      <tr><td>CRM: every touch logged, next action dated</td><td>100%, no exceptions</td></tr></table>
+      <p>The first shipper typically takes 30 to 60 days of daily calling. Your trainer measures activity in the first 90 days, not closed business, because activity is what you control and it is the only reliable predictor of a book two years from now.</p>
+      <div class="callout">When a prospect finally says yes, the first load decides everything. Over-communicate, track it personally, send the POD within the hour. One flawless load earns the second lane; one silent delay sends them back to the broker they had.</div>`}
+  ],
+  quiz:[
+    {
+        "q": "Right person to ask for at a mid-size manufacturer:",
+        "o": [
+            "CEO",
+            "Purchasing",
+            "Logistics or transportation manager",
+            "Accounts payable"
+        ],
+        "a": 2,
+        "e": "Whoever’s phone rings when a truck is late."
+    },
+    {
+        "q": "A new shipper typically needs how many touches?",
+        "o": [
+            "1 to 2",
+            "3 to 4",
+            "6 to 10 over 60 to 90 days",
+            "20+"
+        ],
+        "a": 2,
+        "e": "Most brokers quit after two."
+    },
+    {
+        "q": "On a first call, ask for:",
+        "o": [
+            "All their freight",
+            "One lane to quote this week",
+            "A VP meeting",
+            "Every rate"
+        ],
+        "a": 1,
+        "e": "Backups become primaries."
+    },
+    {
+        "q": "Cheapest, often best lead source:",
+        "o": [
+            "Buying a list",
+            "Asking carriers who else they pick up from",
+            "Fortune 500 cold calls",
+            "Waiting"
+        ],
+        "a": 1,
+        "e": "Carriers see every dock."
+    },
+    {
+        "q": "“Send me an email.” Best response:",
+        "o": [
+            "Long deck",
+            "Ask for one lane they are quoting this week so the email is useful",
+            "Mark dead",
+            "Call tomorrow"
+        ],
+        "a": 1,
+        "e": "Turn it into a qualifying question."
+    },
+    {
+        "q": "After Day 90 with no load:",
+        "o": [
+            "Remove them",
+            "Re-qualify; 30-day check-in cadence",
+            "Email weekly",
+            "Escalate"
+        ],
+        "a": 1,
+        "e": "Never off the list."
+    },
+    {
+        "q": "Trainer measures in the first 90 days:",
+        "o": [
+            "Revenue",
+            "Carriers booked",
+            "Prospecting activity and CRM discipline",
+            "Hours"
+        ],
+        "a": 2,
+        "e": "Activity predicts the book."
+    },
+    {
+        "q": "Sweet-spot shipper size for a new broker:",
+        "o": [
+            "1 load a year",
+            "20 to 200 loads a month",
+            "5,000 loads a month",
+            "Any"
+        ],
+        "a": 1,
+        "e": "Steady freight, still answers the phone."
+    },
+    {
+        "q": "What shippers care about first:",
+        "o": [
+            "Price",
+            "The truck shows up",
+            "Your logo",
+            "Your office location"
+        ],
+        "a": 1,
+        "e": "Price is fourth."
+    },
+    {
+        "q": "Daily prospecting call target:",
+        "o": [
+            "5",
+            "30 in a protected two-hour block",
+            "100",
+            "1"
+        ],
+        "a": 1,
+        "e": "Thirty, every day."
+    },
+    {
+        "q": "Every delivery address on your loads is:",
+        "o": [
+            "Useless",
+            "A company that receives freight and probably ships some",
+            "A competitor",
+            "A carrier"
+        ],
+        "a": 1,
+        "e": "Work the consignees."
+    },
+    {
+        "q": "Why go deep on two verticals?",
+        "o": [
+            "Less work",
+            "You win against brokers who call everyone",
+            "FMCSA requires it",
+            "Shippers demand it"
+        ],
+        "a": 1,
+        "e": "Knowing lanes, seasons and dock quirks wins."
+    },
+    {
+        "q": "Shippers usually:",
+        "o": [
+            "Switch providers outright",
+            "Add a backup; backups who perform become primaries",
+            "Never use brokers",
+            "Only use rail"
+        ],
+        "a": 1,
+        "e": "Ask for one lane."
+    },
+    {
+        "q": "First touch is a call; second touch is:",
+        "o": [
+            "Another call next week",
+            "Same-day three-sentence email, their lane in the subject",
+            "A gift",
+            "LinkedIn only"
+        ],
+        "a": 1,
+        "e": "Short, one ask, no attachment."
+    },
+    {
+        "q": "Two emails in a row without a call between is:",
+        "o": [
+            "Best practice",
+            "Against the cadence rules",
+            "Required",
+            "Fine"
+        ],
+        "a": 1,
+        "e": "Alternate channels."
+    },
+    {
+        "q": "A “no” from a prospect means:",
+        "o": [
+            "Stop forever",
+            "Not today, unless they tell you to stop",
+            "Call the CEO",
+            "Lower rates"
+        ],
+        "a": 1,
+        "e": "Then stop if asked."
+    },
+    {
+        "q": "The first load usually comes from:",
+        "o": [
+            "A big RFP",
+            "A problem load: fall-off, Friday, ugly lane",
+            "A referral only",
+            "A trade show"
+        ],
+        "a": 1,
+        "e": "Be there when their carrier falls off."
+    },
+    {
+        "q": "After a prospect says yes, the first load should be:",
+        "o": [
+            "Handed off",
+            "Over-communicated, tracked personally, POD sent within the hour",
+            "Ignored",
+            "Outsourced"
+        ],
+        "a": 1,
+        "e": "One flawless load earns the second lane."
+    },
+    {
+        "q": "Where do you log every touch?",
+        "o": [
+            "Memory",
+            "CRM with next action dated",
+            "Sticky note",
+            "Nowhere"
+        ],
+        "a": 1,
+        "e": "Before you hang up."
+    },
+    {
+        "q": "A good first-call opener runs:",
+        "o": [
+            "5 minutes",
+            "Under 15 seconds",
+            "30 seconds of company history",
+            "As long as needed"
+        ],
+        "a": 1,
+        "e": "Name, Vanir National, one sentence why them."
+    },
+    {
+        "q": "“We only use asset carriers.” Response:",
+        "o": [
+            "Hang up",
+            "“Keep my number for the Friday they can’t cover.”",
+            "Argue",
+            "Offer a discount"
+        ],
+        "a": 1,
+        "e": "Position as the backup."
+    },
+    {
+        "q": "Lapsed accounts in the TMS are:",
+        "o": [
+            "Cold",
+            "Warm; nobody has called them in a year",
+            "Dead",
+            "Competitors"
+        ],
+        "a": 1,
+        "e": "Easy wins."
+    },
+    {
+        "q": "Which question finds pain?",
+        "o": [
+            "“What’s your budget?”",
+            "“When a truck falls off at 4 p.m. Friday, who do you call?”",
+            "“Do you like trucks?”",
+            "“What’s your EIN?”"
+        ],
+        "a": 1,
+        "e": "Find the hurt lane."
+    },
+    {
+        "q": "Value email on Day 9 contains:",
+        "o": [
+            "A hard ask",
+            "A one-line market note on their lane, no ask",
+            "A rate sheet",
+            "A contract"
+        ],
+        "a": 1,
+        "e": "Give before you ask."
+    },
+    {
+        "q": "Target new names added to the list per day:",
+        "o": [
+            "0",
+            "2",
+            "50",
+            "200"
+        ],
+        "a": 1,
+        "e": "Two a day keeps the funnel full."
+    }
+]
+});
+
+COURSE.push({ id:"final", label:"Final exam", short:"Final", isFinal:true, slides:[{final:true}] });
+
+// ---------- ENGINE ----------
+const KEY="vanir-course-v1";
+let state={quiz:{},lab:{},finalBest:null};
+try{ const s=localStorage.getItem(KEY); if(s) state=Object.assign(state,JSON.parse(s)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+
+let cur={sec:0,slide:0};
+const RESERVED=["settings","sidebar","customize","upgrade","downloads"];
+function secFromHash(){ const h=(location.hash||"").replace("#",""); let i=COURSE.findIndex(s=>s.id===h); if(i<0) i=0; if(!unlocked(i)) i=Math.max(0,firstLocked()-1); return i; }
+
+function totalSlides(sec){ return sec.slides.length + (sec.quiz?1:0); }
+const PASS=85, DRAW=8;
+function quizPassed(id){ const q=state.quiz[id]; return q && q.pct>=PASS; }
+function unlocked(i){ for(let k=0;k<i;k++){ if(COURSE[k].quiz && !quizPassed(COURSE[k].id)) return false; } return true; }
+function firstLocked(){ for(let k=0;k<COURSE.length;k++){ if(!unlocked(k)) return k; } return COURSE.length; }
+function allQuizzesPassed(){ return COURSE.filter(s=>s.quiz).every(s=>quizPassed(s.id)); }
+
+const $=id=>document.getElementById(id);
+
+function renderNav(){
+  const nav=$("nav"); nav.innerHTML="";
+  COURSE.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className=i===cur.sec?"active":"";
+    let tag="";
+    const lock=!unlocked(i);
+    if(s.quiz){ const q=state.quiz[s.id]; if(q) tag=`<span class="tag ${q.pct>=PASS?"pass":"fail"}">${q.pct}%</span>`; else if(lock) tag=`<span class="tag">Locked</span>`; }
+    if(s.isFinal){ if(state.finalBest!=null) tag=`<span class="tag ${state.finalBest>=85?"pass":"fail"}">${state.finalBest}%</span>`; else if(!allQuizzesPassed()) tag=`<span class="tag">Locked</span>`; }
+    b.innerHTML=`<span class="day-n">${s.day||(s.isFinal?"✓":"•")}</span><span>${s.label}</span>${tag}`;
+    if(lock){ b.disabled=true; b.classList.add("locked"); }
+    b.onclick=()=>{ go(i,0); closeRail(); };
+    nav.appendChild(b);
+  });
+}
+
+function go(sec,slide){
+  if(!unlocked(sec)) return;
+  cur={sec,slide};
+  if(!RESERVED.includes(COURSE[sec].id)) history.replaceState(null,"","#"+COURSE[sec].id);
+  render();
+}
+
+function render(){
+  const sec=COURSE[cur.sec]; const n=totalSlides(sec);
+  renderNav();
+  $("where").textContent=sec.label;
+  $("counter").textContent=`${cur.slide+1} / ${n}`;
+  const dots=$("dots"); dots.innerHTML="";
+  for(let i=0;i<n;i++){ const d=document.createElement("i"); if(i===cur.slide) d.className="on"; else if(i<cur.slide) d.className="done"; dots.appendChild(d); }
+  $("prevBtn").disabled = cur.sec===0 && cur.slide===0;
+  const last = cur.sec===COURSE.length-1 && cur.slide===n-1;
+  const blocked = cur.slide===n-1 && sec.quiz && !quizPassed(sec.id);
+  $("nextBtn").textContent = cur.slide===n-1 ? (last?"Finish":(blocked?"Pass the quiz to continue":"Next day")) : "Next";
+  $("nextBtn").disabled = last || blocked;
+
+  const el=$("slide");
+  if(sec.quiz && cur.slide===sec.slides.length){ renderQuiz(sec,el); }
+  else { const s=sec.slides[cur.slide];
+    if(s.lab!==undefined) renderLab(s.lab,el);
+    else if(s.final) renderFinal(el);
+    else { el.innerHTML=(s.k?`<div class="kicker">${s.k}</div>`:"")+`<h2>${s.h}</h2>`+s.html; if(sec.id==="day3" && el.querySelector("#labDebrief")) labDebrief(); }
+  }
+  $("stage").scrollTop=0;
+}
+
+function next(){ const sec=COURSE[cur.sec]; if(cur.slide<totalSlides(sec)-1) go(cur.sec,cur.slide+1); else if(cur.sec<COURSE.length-1 && !(sec.quiz&&!quizPassed(sec.id))) go(cur.sec+1,0); }
+function prev(){ if(cur.slide>0) go(cur.sec,cur.slide-1); else if(cur.sec>0){ const p=cur.sec-1; go(p,totalSlides(COURSE[p])-1); } }
+
+// ---- quiz ----
+function renderQuestions(container,questions,picks,graded){
+  container.innerHTML="";
+  questions.forEach((q,i)=>{
+    const d=document.createElement("div"); d.className="q";
+    let opts=q.o.map((o,j)=>{
+      let cls="opt"; if(picks[i]===j) cls+=" sel";
+      if(graded){ if(j===q.a) cls+=" right"; else if(picks[i]===j) cls+=" wrong"; }
+      return `<button class="${cls}" data-q="${i}" data-o="${j}" ${graded?"disabled":""}><span class="k">${"ABCD"[j]}</span><span>${o}</span></button>`;
+    }).join("");
+    d.innerHTML=`<div class="qn">Question ${i+1} of ${questions.length}</div><div class="qt">${q.q}</div><div class="opts">${opts}</div>`+(graded&&q.e?`<div class="exp">${q.e}</div>`:"");
+    container.appendChild(d);
+  });
+}
+
+const drawn={};
+function drawQuestions(sec){
+  const pool=sec.quiz.map((q,i)=>i); const prev=state.lastDraw&&state.lastDraw[sec.id]||[];
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const fresh=pool.filter(i=>!prev.includes(i)); const pick=fresh.slice(0,DRAW); let k=0;
+  while(pick.length<DRAW){ const c=pool.find(i=>!pick.includes(i)); if(c===undefined) break; pick.push(c); }
+  state.lastDraw=state.lastDraw||{}; state.lastDraw[sec.id]=pick; save();
+  return pick.map(i=>sec.quiz[i]);
+}
+function renderQuiz(sec,el){
+  const prevR=state.quiz[sec.id];
+  if(!drawn[sec.id]) drawn[sec.id]=drawQuestions(sec);
+  const QS=drawn[sec.id];
+  el.innerHTML=`<div class="kicker">Day ${sec.day} quiz</div><h2>Check your understanding</h2>
+    <p class="lead">${QS.length} questions drawn from a pool of ${sec.quiz.length}. You need ${PASS}% to unlock the next day. Answers are explained after you submit; a retake draws a different set.</p>
+    ${prevR?`<div class="score ${prevR.pct>=PASS?"pass":"fail"}"><div class="big">${prevR.pct}%</div><div>Your best so far: ${prevR.right} of ${prevR.of}. ${prevR.pct>=PASS?"Passed. The next day is unlocked.":"Not yet passed. A new set of questions is below."}</div></div>`:""}
+    <div id="qs"></div><button class="btn" id="submitQ">Submit answers</button>`;
+  let picks={}, graded=false;
+  const qs=$("qs");
+  const paint=()=>renderQuestions(qs,QS,picks,graded);
+  paint();
+  qs.onclick=e=>{ const b=e.target.closest(".opt"); if(!b||graded) return; picks[+b.dataset.q]=+b.dataset.o; paint(); };
+  $("submitQ").onclick=()=>{
+    if(Object.keys(picks).length<QS.length){ alert("Answer every question before submitting."); return; }
+    graded=true; paint();
+    let right=QS.filter((q,i)=>picks[i]===q.a).length; const pct=Math.round(right/QS.length*100);
+    if(!prevR||pct>prevR.pct) state.quiz[sec.id]={right,pct,of:QS.length}; save();
+    delete drawn[sec.id];
+    const sc=document.createElement("div"); sc.className="score "+(pct>=PASS?"pass":"fail");
+    sc.innerHTML=`<div class="big">${pct}%</div><div>${right} of ${QS.length} correct. ${pct>=PASS?"Day "+sec.day+" passed. The next day is unlocked.":"Below "+PASS+"%. Review the explanations and the slides, then retake with a new set of questions."}</div>`;
+    const btn=$("submitQ"); btn.replaceWith(sc);
+    if(pct<PASS){ const re=document.createElement("button"); re.className="btn ghost"; re.textContent="Retake with new questions"; re.onclick=()=>render(); sc.after(re); }
+    renderNav(); render.lastPct=pct; $("stage").scrollTop=0;
+  };
+}
+
+// ---- carrier lab ----
+function renderLab(i,el){
+  const c=CARRIERS[i]; const prev=state.lab[c.mc];
+  const flag=(v)=>'';
+  const fgHtml=c.fg.length?c.fg.map(r=>`<div class="fg"><b>${r.d}</b>${r.t}<br><span style="color:var(--muted)">${r.r}</span></div>`).join(""):`<div class="val">No reports on file</div>`;
+  el.innerHTML=`<div class="kicker">Carrier screening lab · ${i+1} of ${CARRIERS.length}</div><h2>Approve or decline?</h2>
+    <p>A carrier calling on your load. Read every line in order, then decide. You get one answer per carrier; it cannot be changed.</p>
+    <div class="profile">
+      <div class="ph"><div><div class="nm">${c.name}</div><div class="dba">${c.dba?"DBA "+c.dba:"No DBA"} · ${c.addr}</div></div>
+        <div class="ids"><b>${c.mc}</b><br>${c.dot}</div></div>
+      <div class="pgrid">
+        <div class="pcell"><div class="lab">Authority</div><div class="val${flag(c.auth)}">${c.auth}</div></div>
+        <div class="pcell"><div class="lab">Revocations / reinstatements</div><div class="val${flag(c.reinst)}">${c.reinst}</div></div>
+        <div class="pcell"><div class="lab">Phone on file (FMCSA)</div><div class="val">${c.fmcsaPhone}</div></div>
+        <div class="pcell"><div class="lab">Caller’s phone</div><div class="val">${c.callerPhone}</div></div>
+        <div class="pcell"><div class="lab">Email on file (FMCSA)</div><div class="val">${c.fmcsaEmail}</div></div>
+        <div class="pcell"><div class="lab">Caller’s email</div><div class="val">${c.callerEmail}</div></div>
+        <div class="pcell"><div class="lab">Auto liability</div><div class="val">${c.autoLiab}</div></div>
+        <div class="pcell"><div class="lab">Cargo coverage</div><div class="val${flag(c.cargo)}">${c.cargo}</div></div>
+        <div class="pcell"><div class="lab">Insurer</div><div class="val">${c.insurer}</div></div>
+        <div class="pcell"><div class="lab">Policy dates</div><div class="val${flag(c.insEff)}">${c.insEff}</div></div>
+        <div class="pcell"><div class="lab">Safety rating</div><div class="val${flag(c.rating)}">${c.rating}</div></div>
+        <div class="pcell"><div class="lab">Fleet / inspections</div><div class="val">${c.units} · ${c.insp}</div></div>
+        <div class="pcell"><div class="lab">Driver out-of-service</div><div class="val">${c.drvOOS}</div></div>
+        <div class="pcell"><div class="lab">Vehicle out-of-service</div><div class="val">${c.vehOOS}</div></div>
+        <div class="pcell wide"><div class="lab">Profile changes, last 12 months</div><div class="val${flag(c.changes)}">${c.changes}</div></div>
+        <div class="pcell wide"><div class="lab">FreightGuard reports (${c.fg.length})</div>${fgHtml}</div>
+      </div>
+      <div class="decide"><span style="font-weight:600;margin-right:6px">Your decision:</span>
+        <button class="btn approve ${prev==="approve"?"chosen":""}" data-d="approve" ${prev?"disabled":""}>Approve</button>
+        <button class="btn decline ${prev==="decline"?"chosen":""}" data-d="decline" ${prev?"disabled":""}>Decline</button></div>
+      <div class="verdict" id="verdict"></div>
+      <div class="mock">Fictional carrier profile for training. Layout mirrors a typical vetting report; names, numbers and incidents are invented.</div>
+    </div>`;
+  const show=(d)=>{ const ok=d===c.answer; $("verdict").innerHTML=`<div class="callout ${ok?"good":"bad"}"><strong>${ok?"Correct.":"Not correct."}</strong> The right call is <strong>${c.answer}</strong>. ${c.why}</div>`; };
+  if(prev) show(prev);
+  el.querySelector(".decide").onclick=e=>{ const b=e.target.closest("button"); if(!b||state.lab[c.mc]) return; const d=b.dataset.d; state.lab[c.mc]=d; save(); el.querySelectorAll(".decide .btn").forEach(x=>{ x.classList.toggle("chosen",x.dataset.d===d); x.disabled=true; }); show(d); };
+}
+function labDebrief(){
+  const rows=CARRIERS.map(c=>{ const p=state.lab[c.mc]; const ok=p===c.answer; return `<tr><td>${c.name}</td><td>${c.answer}</td><td>${p||"not answered"}</td><td style="color:${p?(ok?"var(--green)":"var(--red)"):"var(--muted)"};font-weight:600">${p?(ok?"Correct":"Missed"):"—"}</td></tr>`; }).join("");
+  const right=CARRIERS.filter(c=>state.lab[c.mc]===c.answer).length;
+  $("labDebrief").innerHTML=`<p class="lead">You got ${right} of ${CARRIERS.length} carriers right. Your trainer will want to see 7 of 7 before load board access.</p>
+    <table><tr><th>Carrier</th><th>Right call</th><th>Your call</th><th></th></tr>${rows}</table>`;
+}
+
+// ---- final ----
+function renderFinal(el){
+  if(!allQuizzesPassed()){
+    const missing=COURSE.filter(s=>s.quiz&&!quizPassed(s.id)).map(s=>"Day "+s.day).join(", ");
+    el.innerHTML=`<div class="kicker">Final exam</div><h2>Locked until every daily quiz is passed</h2><p class="lead">Still to pass: ${missing}. Each needs ${PASS}%.</p>`; return;
+  }
+  el.innerHTML=`<div class="kicker">Final exam</div><h2>34 questions, 85% to graduate</h2>
+    <p class="lead">Everything from the week. Fraud and vetting questions are weighted heaviest. Take your time; there is no clock.</p>
+    ${state.finalBest!=null?`<div class="score ${state.finalBest>=85?"pass":"fail"}"><div class="big">${state.finalBest}%</div><div>Your best score. ${state.finalBest>=85?"You have passed the final. Show this screen to your trainer.":"Not yet passed."}</div></div>`:""}
+    <div id="qs"></div><button class="btn" id="submitF">Submit exam</button>`;
+  let picks={}, graded=false; const qs=$("qs");
+  const paint=()=>renderQuestions(qs,FINAL,picks,graded); paint();
+  qs.onclick=e=>{ const b=e.target.closest(".opt"); if(!b||graded) return; picks[+b.dataset.q]=+b.dataset.o; paint(); };
+  $("submitF").onclick=()=>{
+    if(Object.keys(picks).length<FINAL.length){ alert(`Answer all ${FINAL.length} questions before submitting.`); return; }
+    graded=true; paint();
+    const right=FINAL.filter((q,i)=>picks[i]===q.a).length; const pct=Math.round(right/FINAL.length*100);
+    if(state.finalBest==null||pct>state.finalBest) state.finalBest=pct; save();
+    const sc=document.createElement("div"); sc.className="score "+(pct>=85?"pass":"fail");
+    sc.innerHTML=`<div class="big">${pct}%</div><div>${right} of ${FINAL.length} correct. ${pct>=85?"You passed. Screenshot this page and send it to your trainer. Welcome to the desk.":"Below 85%. Correct answers are highlighted above. Review the weak days and retake."}</div>`;
+    const btn=$("submitF"); btn.replaceWith(sc);
+    const re=document.createElement("button"); re.className="btn ghost"; re.textContent="Retake exam"; re.onclick=()=>render(); sc.after(re);
+    renderNav(); $("stage").scrollTop=0;
+  };
+}
+
+// ---- wiring ----
+$("nextBtn").onclick=next; $("prevBtn").onclick=prev;
+document.addEventListener("keydown",e=>{ if(e.target.tagName==="INPUT") return; if(e.key==="ArrowRight") next(); if(e.key==="ArrowLeft") prev(); });
+function closeRail(){ $("rail").classList.remove("open"); $("scrim").classList.remove("open"); }
+$("menuBtn").onclick=()=>{ $("rail").classList.toggle("open"); $("scrim").classList.toggle("open"); };
+$("scrim").onclick=closeRail;
+$("resetBtn").onclick=()=>{ if(confirm("Erase all quiz, lab and exam progress in this browser?")){ state={quiz:{},lab:{},finalBest:null}; save(); for(const k in drawn) delete drawn[k]; go(0,0); } };
+window.addEventListener("hashchange",()=>{ const s=secFromHash(); if(s!==cur.sec) go(s,0); });
+go(secFromHash(),0);
+</script>
+</body>
+</html>
